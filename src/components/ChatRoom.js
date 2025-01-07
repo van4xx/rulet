@@ -405,6 +405,41 @@ const ChatRoom = ({ currentTheme }) => {
     };
   }, [peer]);
 
+  const startSearch = useCallback(() => {
+    if (!localStream) {
+      setConnectionError('Нет доступа к камере');
+      return;
+    }
+
+    if (!socket.connected) {
+      console.log('Socket not connected, attempting to connect...');
+      socket.connect();
+    }
+
+    setConnectionStatus('searching');
+    setConnectionError(null);
+    setIsSearchingAnimation(true);
+    setMessages([]);
+    setPartnerJoined(false);
+    setChatDuration(0);
+
+    if (peer) {
+      peer.destroy();
+      setPeer(null);
+    }
+
+    if (remoteVideoRef.current) {
+      remoteVideoRef.current.srcObject = null;
+    }
+
+    setTimeout(() => {
+      console.log('Emitting startSearch');
+      socket.emit('startSearch');
+      setIsSearching(true);
+      setIsSearchingAnimation(false);
+    }, 1000);
+  }, [localStream, peer, socket]);
+
   const handleConnectionError = useCallback(() => {
     if (peer) {
       peer.destroy();
@@ -416,7 +451,7 @@ const ChatRoom = ({ currentTheme }) => {
         startSearch();
       }
     }, 3000);
-  }, [peer, connectionStatus, startSearch]);
+  }, [peer, startSearch]);
 
   const handlePeerDisconnect = useCallback(() => {
     if (remoteVideoRef.current) {
@@ -462,11 +497,6 @@ const ChatRoom = ({ currentTheme }) => {
           iceCandidatePoolSize: 10,
           bundlePolicy: 'max-bundle',
           rtcpMuxPolicy: 'require'
-        },
-        sdpTransform: (sdp) => {
-          sdp = sdp.replace('useinbandfec=1', 'useinbandfec=1; stereo=1; maxaveragebitrate=510000');
-          sdp = sdp.replace('a=group:BUNDLE 0 1', 'a=group:BUNDLE 1 0');
-          return sdp;
         }
       });
 
@@ -490,6 +520,14 @@ const ChatRoom = ({ currentTheme }) => {
         console.log('ICE state:', state);
         if (state === 'disconnected' || state === 'failed') {
           handleIceDisconnect();
+        }
+      });
+
+      newPeer.on('stream', stream => {
+        console.log('Received remote stream');
+        if (remoteVideoRef.current) {
+          remoteVideoRef.current.srcObject = stream;
+          setConnectionStatus('connected');
         }
       });
 
@@ -697,41 +735,6 @@ const ChatRoom = ({ currentTheme }) => {
       }
     };
   }, [localStream, connectionStatus]);
-
-  const startSearch = useCallback(() => {
-    if (!localStream) {
-      setConnectionError('Нет доступа к камере');
-      return;
-    }
-
-    if (!socket.connected) {
-      console.log('Socket not connected, attempting to connect...');
-      socket.connect();
-    }
-
-    setConnectionStatus('searching');
-    setConnectionError(null);
-    setIsSearchingAnimation(true);
-    setMessages([]);
-    setPartnerJoined(false);
-    setChatDuration(0);
-
-    if (peer) {
-      peer.destroy();
-      setPeer(null);
-    }
-
-    if (remoteVideoRef.current) {
-      remoteVideoRef.current.srcObject = null;
-    }
-
-    setTimeout(() => {
-      console.log('Emitting startSearch');
-      socket.emit('startSearch');
-      setIsSearching(true);
-      setIsSearchingAnimation(false);
-    }, 1000);
-  }, [localStream, peer]);
 
   const nextPartner = () => {
     setIsNextTransition(true);
