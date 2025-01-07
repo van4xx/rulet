@@ -31,19 +31,17 @@ const Content = styled.div`
 const Title = styled.h1`
   font-size: 4rem;
   margin-bottom: 1rem;
-  color: ${props => props.theme === 'day' ? '#000' : '#FFD700'};
-  text-shadow: ${props => props.theme === 'day'
-    ? '2px 2px 4px rgba(0, 0, 0, 0.2)'
-    : '0 0 20px rgba(255, 215, 0, 0.3)'};
+  color: #FFD700;
+  text-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
 `;
 
 const Subtitle = styled.p`
   font-size: 1.5rem;
   margin-bottom: 2rem;
-  color: ${props => props.theme === 'day' ? '#000' : 'rgba(255, 255, 255, 0.9)'};
+  color: rgba(255, 255, 255, 0.9);
   max-width: 800px;
   margin: 0 auto 2rem;
-  font-weight: ${props => props.theme === 'day' ? '500' : '400'};
+  font-weight: 400;
 `;
 
 const StartButton = styled(Link)`
@@ -74,45 +72,40 @@ const StatsGrid = styled.div`
 `;
 
 const StatBox = styled.div`
-  background: ${props => props.theme === 'day'
-    ? 'rgba(255, 255, 255, 0.98)'
-    : 'rgba(255, 255, 255, 0.1)'};
+  background: rgba(0, 0, 0, 0.7);
   backdrop-filter: blur(10px);
-  padding: 2rem;
-  border-radius: 20px;
-  border: 1px solid ${props => props.theme === 'day'
-    ? 'rgba(0, 0, 0, 0.1)'
-    : 'rgba(255, 255, 255, 0.1)'};
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
   transition: all 0.3s ease;
+
+  svg {
+    font-size: 32px;
+    margin-bottom: 16px;
+    color: ${props => props.iconColor};
+  }
 
   &:hover {
     transform: translateY(-5px);
-    background: ${props => props.theme === 'day'
-      ? 'rgba(255, 255, 255, 1)'
-      : 'rgba(255, 255, 255, 0.15)'};
-    box-shadow: ${props => props.theme === 'day'
-      ? '0 5px 15px rgba(0, 0, 0, 0.1)'
-      : '0 5px 15px rgba(0, 0, 0, 0.3)'};
-  }
-
-  svg {
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
-    color: ${props => props.theme === 'day' ? '#000' : props.iconColor || '#FFD700'};
+    border-color: #64ffda;
   }
 `;
 
 const StatNumber = styled.div`
-  font-size: 2rem;
-  font-weight: bold;
-  margin: 0.5rem 0;
-  color: ${props => props.theme === 'day' ? '#000' : '#FFD700'};
+  font-size: 36px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #ffffff;
 `;
 
 const StatLabel = styled.div`
-  font-size: 1.1rem;
-  color: ${props => props.theme === 'day' ? '#000' : 'rgba(255, 255, 255, 0.8)'};
-  font-weight: ${props => props.theme === 'day' ? '500' : '400'};
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.4;
 `;
 
 const FeatureGrid = styled.div`
@@ -295,25 +288,25 @@ const Home = ({ currentTheme, onlineUsers }) => {
         </Subtitle>
 
         <StatsGrid>
-          <StatBox theme={currentTheme} iconColor="#FF6B6B">
+          <StatBox theme={currentTheme} iconColor="#64ffda">
             <FaUsers />
-            <StatNumber theme={currentTheme}>{onlineUsers}</StatNumber>
+            <StatNumber theme={currentTheme}>789</StatNumber>
             <StatLabel theme={currentTheme}>Онлайн пользователей</StatLabel>
           </StatBox>
-          <StatBox theme={currentTheme} iconColor="#4ECDC4">
+          <StatBox theme={currentTheme} iconColor="#64ffda">
             <FaVideo />
-            <StatNumber>1M+</StatNumber>
-            <StatLabel>Видеочатов в день</StatLabel>
+            <StatNumber theme={currentTheme}>1M+</StatNumber>
+            <StatLabel theme={currentTheme}>Видеочатов в день</StatLabel>
           </StatBox>
-          <StatBox theme={currentTheme} iconColor="#FFD93D">
+          <StatBox theme={currentTheme} iconColor="#64ffda">
             <FaGlobe />
-            <StatNumber>150+</StatNumber>
-            <StatLabel>Стран</StatLabel>
+            <StatNumber theme={currentTheme}>150+</StatNumber>
+            <StatLabel theme={currentTheme}>Стран</StatLabel>
           </StatBox>
-          <StatBox theme={currentTheme} iconColor="#FF9A8B">
+          <StatBox theme={currentTheme} iconColor="#64ffda">
             <FaHeart />
-            <StatNumber>500K+</StatNumber>
-            <StatLabel>Счастливых знакомств</StatLabel>
+            <StatNumber theme={currentTheme}>500K+</StatNumber>
+            <StatLabel theme={currentTheme}>Счастливых знакомств</StatLabel>
           </StatBox>
         </StatsGrid>
 
