@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, memo } from 'react';
 import styled from 'styled-components';
 import spaceThemes from '../themes/spaceThemes';
 
@@ -29,22 +29,29 @@ const Star = styled.div`
   height: ${props => props.size}px;
   background: ${props => props.color};
   border-radius: 50%;
-  animation: twinkle ${props => props.twinkleSpeed}s ease-in-out infinite alternate,
-             glow ${props => props.twinkleSpeed * 1.5}s ease-in-out infinite alternate;
+  animation: starTwinkle ${props => props.twinkleSpeed}s ease-in-out infinite;
   box-shadow: 0 0 ${props => props.size * 2}px ${props => props.color},
               0 0 ${props => props.size * 4}px ${props => props.color},
               0 0 ${props => props.size * 6}px ${props => props.color};
+  will-change: transform, opacity, filter;
+  transform: translateZ(0);
 
-  @keyframes twinkle {
-    0% { opacity: 0.3; transform: scale(0.8); }
-    50% { opacity: 0.8; transform: scale(1.1); }
-    100% { opacity: 1; transform: scale(1); }
-  }
-
-  @keyframes glow {
-    0% { filter: brightness(0.8) blur(1px); }
-    50% { filter: brightness(1.2) blur(2px); }
-    100% { filter: brightness(1) blur(1px); }
+  @keyframes starTwinkle {
+    0% { 
+      opacity: 0.3;
+      transform: scale(0.9);
+      filter: brightness(0.8);
+    }
+    50% { 
+      opacity: 1;
+      transform: scale(1.1);
+      filter: brightness(1.3);
+    }
+    100% { 
+      opacity: 0.3;
+      transform: scale(0.9);
+      filter: brightness(0.8);
+    }
   }
 `;
 
@@ -54,35 +61,39 @@ const Planet = styled.div`
   height: ${props => props.size}px;
   background: ${props => props.color};
   border-radius: 50%;
-  box-shadow: 0 0 30px ${props => props.glowColor || props.color};
+  box-shadow: 0 0 50px ${props => props.glowColor || props.color};
   animation: orbit ${props => props.orbitSpeed}s linear infinite;
   transform-origin: 50% 50%;
+  will-change: transform;
+  transform: translateZ(0);
 
   &::before {
     content: '';
     position: absolute;
-    top: -5%;
-    left: -5%;
-    right: -5%;
-    bottom: -5%;
+    top: -10%;
+    left: -10%;
+    right: -10%;
+    bottom: -10%;
     background: ${props => props.atmosphereColor || 'transparent'};
     border-radius: 50%;
-    opacity: 0.5;
-    animation: pulse 4s ease-in-out infinite;
+    opacity: 0.3;
+    animation: pulse 8s ease-in-out infinite;
+    filter: blur(8px);
   }
 
   ${props => props.rings ? `
     &::after {
       content: '';
       position: absolute;
-      width: 140%;
+      width: 160%;
       height: 20px;
       background: ${props.ringsColor || 'rgba(255, 255, 255, 0.2)'};
-      left: -20%;
+      left: -30%;
       top: 50%;
       transform: translateY(-50%) rotate(75deg);
       border-radius: 50%;
-      box-shadow: 0 0 20px ${props.ringsColor || 'rgba(255, 255, 255, 0.2)'};
+      box-shadow: 0 0 30px ${props.ringsColor || 'rgba(255, 255, 255, 0.2)'};
+      opacity: 0.7;
     }
   ` : ''}
 
@@ -92,9 +103,9 @@ const Planet = styled.div`
   }
 
   @keyframes pulse {
-    0% { transform: scale(1); opacity: 0.3; }
-    50% { transform: scale(1.1); opacity: 0.5; }
-    100% { transform: scale(1); opacity: 0.3; }
+    0% { transform: scale(1); opacity: 0.2; }
+    50% { transform: scale(1.2); opacity: 0.4; }
+    100% { transform: scale(1); opacity: 0.2; }
   }
 `;
 
@@ -133,13 +144,16 @@ const Nebula = styled.div`
 `;
 
 const Comet = styled.div`
-  position: absolute;
-  width: 4px;
-  height: 4px;
+  position: fixed;
+  width: 3px;
+  height: 3px;
   background: ${props => props.color};
   border-radius: 50%;
   animation: cometMove ${props => props.speed}s linear infinite;
   animation-delay: ${props => props.delay}s;
+  will-change: transform;
+  transform: translateZ(0);
+  opacity: 0;
 
   &::after {
     content: '';
@@ -148,26 +162,81 @@ const Comet = styled.div`
     right: 0;
     width: ${props => props.tailLength}px;
     height: 2px;
-    background: linear-gradient(to left, ${props => props.color}, transparent);
+    background: linear-gradient(to left, 
+      ${props => props.color} 0%,
+      ${props => props.color}80 30%,
+      ${props => props.color}40 60%,
+      ${props => props.color}00 100%
+    );
     transform: translateY(-50%);
+    border-radius: 100px;
   }
 
   @keyframes cometMove {
-    from { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
-    to { transform: translateX(200%) translateY(200%) rotate(45deg); }
+    0% {
+      transform: translate(-5vw, -5vh) rotate(35deg);
+      opacity: 0;
+    }
+    10% {
+      opacity: 1;
+    }
+    90% {
+      opacity: 1;
+    }
+    100% {
+      transform: translate(105vw, 105vh) rotate(35deg);
+      opacity: 0;
+    }
   }
 `;
 
 const UFO = styled.div`
-  position: absolute;
+  position: fixed;
   font-size: ${props => props.size}px;
-  animation: ufoFloat ${props => 5 / props.speed}s ease-in-out infinite;
+  animation: ufoFloat${props => props.index} ${props => 12 / props.speed}s ease-in-out infinite;
   user-select: none;
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+  will-change: transform;
+  transform: translateZ(0);
 
-  @keyframes ufoFloat {
-    0% { transform: translate(0, 0); }
-    50% { transform: translate(30px, 30px); }
-    100% { transform: translate(0, 0); }
+  @keyframes ufoFloat1 {
+    0% { transform: translate(0vw, 10vh) rotate(-5deg); }
+    25% { transform: translate(30vw, 40vh) rotate(5deg); }
+    50% { transform: translate(60vw, 20vh) rotate(-5deg); }
+    75% { transform: translate(90vw, 50vh) rotate(5deg); }
+    100% { transform: translate(0vw, 10vh) rotate(-5deg); }
+  }
+
+  @keyframes ufoFloat2 {
+    0% { transform: translate(90vw, 80vh) rotate(5deg); }
+    25% { transform: translate(60vw, 40vh) rotate(-5deg); }
+    50% { transform: translate(30vw, 60vh) rotate(5deg); }
+    75% { transform: translate(10vw, 20vh) rotate(-5deg); }
+    100% { transform: translate(90vw, 80vh) rotate(5deg); }
+  }
+
+  @keyframes ufoFloat3 {
+    0% { transform: translate(50vw, 0vh) rotate(-5deg); }
+    25% { transform: translate(80vw, 30vh) rotate(5deg); }
+    50% { transform: translate(40vw, 80vh) rotate(-5deg); }
+    75% { transform: translate(20vw, 40vh) rotate(5deg); }
+    100% { transform: translate(50vw, 0vh) rotate(-5deg); }
+  }
+
+  @keyframes ufoFloat4 {
+    0% { transform: translate(20vw, 90vh) rotate(5deg); }
+    25% { transform: translate(70vw, 60vh) rotate(-5deg); }
+    50% { transform: translate(10vw, 30vh) rotate(5deg); }
+    75% { transform: translate(90vw, 10vh) rotate(-5deg); }
+    100% { transform: translate(20vw, 90vh) rotate(5deg); }
+  }
+
+  @keyframes ufoFloat5 {
+    0% { transform: translate(40vw, 50vh) rotate(-5deg); }
+    25% { transform: translate(10vw, 80vh) rotate(5deg); }
+    50% { transform: translate(80vw, 40vh) rotate(-5deg); }
+    75% { transform: translate(30vw, 10vh) rotate(5deg); }
+    100% { transform: translate(40vw, 50vh) rotate(-5deg); }
   }
 `;
 
@@ -193,11 +262,32 @@ const Aurora = styled.div`
   }
 `;
 
-const SpaceBackground = ({ theme = 'night' }) => {
+const SpaceBackground = memo(({ theme = 'night' }) => {
   const canvasRef = useRef(null);
   const currentTheme = spaceThemes[theme];
+  const starsRef = useRef([]);
 
   useEffect(() => {
+    if (!document.getElementById('star-animations')) {
+      const style = document.createElement('style');
+      style.id = 'star-animations';
+      style.textContent = `
+        @keyframes twinkle {
+          0%, 100% { 
+            opacity: 0.2;
+            transform: scale(0.85);
+            filter: brightness(0.5);
+          }
+          50% { 
+            opacity: 1;
+            transform: scale(1.15);
+            filter: brightness(1.2);
+          }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+
     const generateStars = () => {
       const stars = [];
       const { count, size, color, twinkleSpeed } = currentTheme.stars;
@@ -207,16 +297,19 @@ const SpaceBackground = ({ theme = 'night' }) => {
           left: `${Math.random() * 100}%`,
           top: `${Math.random() * 100}%`,
           size: Math.random() * (size.max - size.min) + size.min,
-          twinkleSpeed: Math.random() * (twinkleSpeed.max - twinkleSpeed.min) + twinkleSpeed.min
+          twinkleSpeed: Math.random() * (twinkleSpeed.max - twinkleSpeed.min) + twinkleSpeed.min,
+          delay: Math.random() * 2
         });
       }
       
       return stars;
     };
 
-    if (canvasRef.current) {
+    if (canvasRef.current && (!starsRef.current.length || theme !== starsRef.current.theme)) {
       canvasRef.current.innerHTML = '';
       const stars = generateStars();
+      const fragment = document.createDocumentFragment();
+
       stars.forEach(star => {
         const starElement = document.createElement('div');
         Object.assign(starElement.style, {
@@ -230,28 +323,24 @@ const SpaceBackground = ({ theme = 'night' }) => {
           boxShadow: `0 0 ${star.size * 2}px ${currentTheme.stars.color},
                       0 0 ${star.size * 4}px ${currentTheme.stars.color},
                       0 0 ${star.size * 6}px ${currentTheme.stars.color}`,
-          animation: `twinkle ${star.twinkleSpeed}s ease-in-out infinite alternate,
-                     glow ${star.twinkleSpeed * 1.5}s ease-in-out infinite alternate`
+          animation: `twinkle ${star.twinkleSpeed}s ease-in-out infinite`,
+          animationDelay: `${star.delay}s`,
+          willChange: 'transform, opacity, filter',
+          transform: 'translateZ(0)'
         });
-        canvasRef.current.appendChild(starElement);
+        fragment.appendChild(starElement);
       });
 
-      const style = document.createElement('style');
-      style.textContent = `
-        @keyframes twinkle {
-          0% { opacity: 0.3; transform: scale(0.8); }
-          50% { opacity: 0.8; transform: scale(1.1); }
-          100% { opacity: 1; transform: scale(1); }
-        }
-        @keyframes glow {
-          0% { filter: brightness(0.8) blur(1px); }
-          50% { filter: brightness(1.2) blur(2px); }
-          100% { filter: brightness(1) blur(1px); }
-        }
-      `;
-      document.head.appendChild(style);
+      canvasRef.current.appendChild(fragment);
+      starsRef.current = { stars, theme };
     }
   }, [theme, currentTheme.stars]);
+
+  const MemoizedPlanet = memo(Planet);
+  const MemoizedSatellite = memo(Satellite);
+  const MemoizedNebula = memo(Nebula);
+  const MemoizedComet = memo(Comet);
+  const MemoizedUFO = memo(UFO);
 
   return (
     <Background theme={currentTheme}>
@@ -259,20 +348,20 @@ const SpaceBackground = ({ theme = 'night' }) => {
         <div ref={canvasRef} style={{ position: 'absolute', width: '100%', height: '100%' }} />
         
         {currentTheme.nebulas?.map((nebula, i) => (
-          <Nebula key={i} {...nebula} />
+          <MemoizedNebula key={i} {...nebula} />
         ))}
 
         {currentTheme.planets.map((planet, i) => (
           <React.Fragment key={i}>
-            <Planet {...planet} />
+            <MemoizedPlanet {...planet} />
             {planet.satellites?.map((satellite, j) => (
-              <Satellite key={`${i}-${j}`} {...satellite} />
+              <MemoizedSatellite key={`${i}-${j}`} {...satellite} />
             ))}
           </React.Fragment>
         ))}
 
         {currentTheme.comets && Array.from({ length: currentTheme.comets.count }).map((_, i) => (
-          <Comet
+          <MemoizedComet
             key={i}
             color={currentTheme.comets.color}
             tailLength={currentTheme.comets.tailLength}
@@ -286,17 +375,14 @@ const SpaceBackground = ({ theme = 'night' }) => {
         ))}
 
         {currentTheme.ufos && Array.from({ length: currentTheme.ufos.count }).map((_, i) => (
-          <UFO
+          <MemoizedUFO
             key={i}
+            index={i + 1}
             size={currentTheme.ufos.size}
             speed={Math.random() * (currentTheme.ufos.speed.max - currentTheme.ufos.speed.min) + currentTheme.ufos.speed.min}
-            style={{
-              left: `${Math.random() * 80}%`,
-              top: `${Math.random() * 80}%`
-            }}
           >
             {currentTheme.ufos.emoji}
-          </UFO>
+          </MemoizedUFO>
         ))}
 
         {currentTheme.aurora?.active && (
@@ -304,7 +390,7 @@ const SpaceBackground = ({ theme = 'night' }) => {
         )}
 
         {currentTheme.shootingStars && Array.from({ length: currentTheme.shootingStars.count }).map((_, i) => (
-          <Comet
+          <MemoizedComet
             key={`shooting-star-${i}`}
             color={currentTheme.shootingStars.color}
             tailLength={currentTheme.shootingStars.tailLength}
@@ -315,6 +401,8 @@ const SpaceBackground = ({ theme = 'night' }) => {
       </SpaceContainer>
     </Background>
   );
-};
+});
+
+SpaceBackground.displayName = 'SpaceBackground';
 
 export default SpaceBackground; 
