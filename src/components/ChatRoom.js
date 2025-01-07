@@ -349,28 +349,46 @@ const ChatRoom = ({ currentTheme }) => {
   }, [isConnected, isSearching, connectionStatus, localStream, peer]);
 
   useEffect(() => {
-    socket.on('connect_error', (error) => {
-      console.error('Socket connection error:', error);
-      setConnectionError('Ошибка подключения к серверу');
-    });
-
     socket.on('connect', () => {
       console.log('Socket connected:', socket.id);
+      setConnectionError(null);
     });
 
     socket.on('disconnect', () => {
       console.log('Socket disconnected');
       setIsConnected(false);
+      setConnectionStatus('idle');
       if (peer) {
         peer.destroy();
         setPeer(null);
       }
+      setConnectionError('Соединение с сервером потеряно. Переподключение...');
+    });
+
+    socket.on('connect_error', (error) => {
+      console.error('Connection error:', error);
+      setConnectionError('Ошибка подключения к серверу. Пробуем переподключиться...');
+    });
+
+    socket.on('waiting', () => {
+      console.log('Waiting for partner');
+      setConnectionStatus('searching');
+      setIsSearching(true);
+    });
+
+    socket.on('searchTimeout', () => {
+      console.log('Search timeout');
+      setConnectionStatus('idle');
+      setIsSearching(false);
+      setConnectionError('Поиск собеседника занял слишком много времени. Попробуйте еще раз.');
     });
 
     return () => {
-      socket.off('connect_error');
       socket.off('connect');
       socket.off('disconnect');
+      socket.off('connect_error');
+      socket.off('waiting');
+      socket.off('searchTimeout');
     };
   }, [peer]);
 
@@ -678,6 +696,11 @@ const ChatRoom = ({ currentTheme }) => {
       return;
     }
 
+    if (!socket.connected) {
+      console.log('Socket not connected, attempting to connect...');
+      socket.connect();
+    }
+
     // Очищаем предыдущее состояние
     setConnectionStatus('searching');
     setConnectionError(null);
@@ -697,6 +720,7 @@ const ChatRoom = ({ currentTheme }) => {
 
     // Начинаем поиск с небольшой задержкой для анимации
     setTimeout(() => {
+      console.log('Emitting startSearch');
       socket.emit('startSearch');
       setIsSearching(true);
       setIsSearchingAnimation(false);
