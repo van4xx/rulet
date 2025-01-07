@@ -32,7 +32,7 @@ const spaceThemes = {
       count: 3,
       tailLength: 150,
       color: '#40c4ff',
-      speed: { min: 4, max: 6 }
+      speed: { min: 2, max: 3 }
     },
     ufos: {
       count: 5,
@@ -56,7 +56,7 @@ const spaceThemes = {
       count: 2,
       tailLength: 150,
       color: '#ffd700',
-      speed: { min: 4, max: 6 }
+      speed: { min: 2, max: 3 }
     }
   },
   night: {
@@ -92,7 +92,7 @@ const spaceThemes = {
       count: 6,
       tailLength: 180,
       color: '#18ffff',
-      speed: { min: 5, max: 7 }
+      speed: { min: 2, max: 3 }
     },
     nebulas: [
       {
@@ -110,7 +110,7 @@ const spaceThemes = {
       count: 4,
       tailLength: 180,
       color: '#ffffff',
-      speed: { min: 5, max: 7 }
+      speed: { min: 2, max: 3 }
     },
     ufos: {
       count: 5,
