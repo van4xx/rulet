@@ -528,56 +528,57 @@ const ChatRoom = ({ currentTheme }) => {
   }, [peer]);
 
   useEffect(() => {
+    socket.on('connect', () => {
+      console.log('Socket connected:', socket.id);
+      setConnectionError(null);
+    });
+
+    socket.on('disconnect', () => {
+      console.log('Socket disconnected');
+      setIsConnected(false);
+      setConnectionStatus('idle');
+      if (peer) {
+        peer.destroy();
+        setPeer(null);
+      }
+      setConnectionError('Соединение с сервером потеряно');
+    });
+
+    socket.on('waiting', () => {
+      console.log('Waiting for partner');
+      setConnectionStatus('searching');
+    });
+
     socket.on('chatStarted', async ({ roomId: newRoomId }) => {
       console.log('Chat started in room:', newRoomId);
       setRoomId(newRoomId);
       setIsConnected(true);
       setIsSearching(false);
       setConnectionStatus('connecting');
+      setConnectionError(null);
       
       if (localStream) {
         try {
-          const newPeer = new Peer({
-            initiator: true,
-            trickle: false,
-            stream: localStream,
-            config: {
-              iceServers: [
-                { urls: 'stun:stun.l.google.com:19302' },
-                { urls: 'stun:stun1.l.google.com:19302' }
-              ]
-            }
-          });
+          const newPeer = createPeerConnection(true, localStream);
+          if (newPeer) {
+            setPeer(newPeer);
+            
+            // Устанавливаем таймер для проверки успешности соединения
+            const connectionTimeout = setTimeout(() => {
+              if (connectionStatus !== 'connected') {
+                console.log('Connection timeout');
+                handleConnectionError();
+              }
+            }, 15000);
 
-          newPeer.on('signal', signal => {
-            console.log('Sending signal to partner');
-            socket.emit('signal', { signal, roomId: newRoomId });
-          });
-
-          newPeer.on('stream', stream => {
-            console.log('Received remote stream');
-            if (remoteVideoRef.current) {
-              remoteVideoRef.current.srcObject = stream;
-              setConnectionStatus('connected');
-            }
-          });
-
-          newPeer.on('error', err => {
-            console.error('Peer connection error:', err);
-            setConnectionError('Ошибка подключения к собеседнику');
-          });
-
-          newPeer.on('close', () => {
-            console.log('Peer connection closed');
-            if (remoteVideoRef.current) {
-              remoteVideoRef.current.srcObject = null;
-            }
-          });
-
-          setPeer(newPeer);
+            // Очищаем таймер при успешном соединении
+            newPeer.on('connect', () => {
+              clearTimeout(connectionTimeout);
+            });
+          }
         } catch (err) {
-          console.error('Error creating peer:', err);
-          setConnectionError('Ошибка создания соединения');
+          console.error('Error in chat start:', err);
+          handleConnectionError();
         }
       }
     });
@@ -659,6 +660,9 @@ const ChatRoom = ({ currentTheme }) => {
     });
 
     return () => {
+      socket.off('connect');
+      socket.off('disconnect');
+      socket.off('waiting');
       socket.off('chatStarted');
       socket.off('partnerJoined');
       socket.off('partnerLeft');
@@ -666,7 +670,7 @@ const ChatRoom = ({ currentTheme }) => {
         clearInterval(chatTimerInterval);
       }
     };
-  }, [localStream, chatTimerInterval, roomId]);
+  }, [localStream, connectionStatus]);
 
   const startSearch = () => {
     if (!localStream) {
@@ -674,10 +678,13 @@ const ChatRoom = ({ currentTheme }) => {
       return;
     }
 
+    // Очищаем предыдущее состояние
     setConnectionStatus('searching');
     setConnectionError(null);
     setIsSearchingAnimation(true);
     setMessages([]);
+    setPartnerJoined(false);
+    setChatDuration(0);
 
     if (peer) {
       peer.destroy();
@@ -688,17 +695,19 @@ const ChatRoom = ({ currentTheme }) => {
       remoteVideoRef.current.srcObject = null;
     }
 
-    socket.emit('startSearch');
-    
+    // Начинаем поиск с небольшой задержкой для анимации
     setTimeout(() => {
+      socket.emit('startSearch');
       setIsSearching(true);
       setIsSearchingAnimation(false);
-    }, 2000);
+    }, 1000);
   };
 
   const nextPartner = () => {
     setIsNextTransition(true);
     setMessages([]);
+    setPartnerJoined(false);
+    setChatDuration(0);
     
     if (peer) {
       peer.destroy();
@@ -711,7 +720,9 @@ const ChatRoom = ({ currentTheme }) => {
 
     setTimeout(() => {
       setIsNextTransition(false);
-      socket.emit('nextPartner', { roomId });
+      if (roomId) {
+        socket.emit('nextPartner', { roomId });
+      }
     }, 1000);
   };
 
@@ -725,11 +736,17 @@ const ChatRoom = ({ currentTheme }) => {
       remoteVideoRef.current.srcObject = null;
     }
 
-    socket.emit('leaveRoom', { roomId });
+    if (roomId) {
+      socket.emit('leaveRoom', { roomId });
+    }
+
     setIsConnected(false);
     setIsSearching(false);
     setMessages([]);
     setConnectionStatus('idle');
+    setPartnerJoined(false);
+    setChatDuration(0);
+    setRoomId(null);
   };
 
   const renderPartnerVideo = () => {
