@@ -35,7 +35,7 @@ const spaceThemes = {
       speed: { min: 14, max: 14 }
     },
     ufos: {
-      count: 5,
+      count: 3,
       emoji: '🛸',
       size: 30,
       speed: { min: 0.15, max: 0.3 }
@@ -113,7 +113,7 @@ const spaceThemes = {
       speed: { min: 14, max: 14 }
     },
     ufos: {
-      count: 5,
+      count: 3,
       emoji: '🛸',
       size: 35,
       speed: { min: 0.15, max: 0.3 }
