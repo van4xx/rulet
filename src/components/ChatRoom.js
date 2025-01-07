@@ -13,11 +13,16 @@ import FaceFilters from './FaceFilters';
 import Face3DMasks from './Face3DMasks';
 import Mask3DPicker from './Mask3DPicker';
 
-const socket = io('http://localhost:5001', {
-  transports: ['websocket'],
-  upgrade: false,
+const socket = io(process.env.NODE_ENV === 'production' 
+  ? 'https://ruletka.top' 
+  : 'http://localhost:5001', {
+  transports: ['websocket', 'polling'],
   reconnection: true,
-  reconnectionAttempts: 5
+  reconnectionAttempts: 5,
+  reconnectionDelay: 1000,
+  reconnectionDelayMax: 5000,
+  timeout: 20000,
+  withCredentials: true
 });
 
 const ChatRoom = () => {
@@ -342,7 +347,7 @@ const ChatRoom = () => {
     try {
       const newPeer = new Peer({
         initiator,
-        trickle: false,
+        trickle: true,
         stream,
         config: {
           iceServers: [
@@ -350,8 +355,18 @@ const ChatRoom = () => {
             { urls: 'stun:stun1.l.google.com:19302' },
             { urls: 'stun:stun2.l.google.com:19302' },
             { urls: 'stun:stun3.l.google.com:19302' },
-            { urls: 'stun:stun4.l.google.com:19302' }
-          ]
+            { urls: 'stun:stun4.l.google.com:19302' },
+            {
+              urls: 'turn:turn.ruletka.top:3478',
+              username: 'ruletka',
+              credential: 'ruletka123'
+            }
+          ],
+          iceTransportPolicy: 'all',
+          iceCandidatePoolSize: 10
+        },
+        sdpTransform: (sdp) => {
+          return sdp.replace('useinbandfec=1', 'useinbandfec=1; stereo=1; maxaveragebitrate=510000');
         }
       });
 
