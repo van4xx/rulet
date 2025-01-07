@@ -13,11 +13,18 @@ import FaceFilters from './FaceFilters';
 import Face3DMasks from './Face3DMasks';
 import Mask3DPicker from './Mask3DPicker';
 
-const socket = io('http://localhost:5002', {
-  transports: ['websocket'],
-  upgrade: false,
+const SOCKET_SERVER = process.env.NODE_ENV === 'production' 
+  ? 'https://ruletka.top'
+  : 'http://localhost:5002';
+
+const socket = io(SOCKET_SERVER, {
+  transports: ['websocket', 'polling'],
+  upgrade: true,
   reconnection: true,
-  reconnectionAttempts: 5
+  reconnectionAttempts: 5,
+  reconnectionDelay: 1000,
+  timeout: 60000,
+  withCredentials: true
 });
 
 const ChatRoom = () => {
