@@ -18,12 +18,12 @@ import styled from 'styled-components';
 
 // Socket configuration
 const SOCKET_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://ruletka.top' 
-  : 'http://localhost:5002';
+  ? 'wss://ruletka.top' 
+  : 'ws://localhost:5002';
 
 const socket = io(SOCKET_URL, {
   path: '/socket.io',
-  transports: ['websocket', 'polling'],
+  transports: ['websocket'],
   reconnection: true,
   reconnectionAttempts: 10,
   reconnectionDelay: 1000,

@@ -71,7 +71,9 @@ const StatsGrid = styled.div`
   margin: 3rem 0;
 `;
 
-const StatBox = styled.div`
+const StatBox = styled.div.attrs(props => ({
+  'data-icon-color': props.iconColor
+}))`
   background: rgba(0, 0, 0, 0.7);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -86,7 +88,7 @@ const StatBox = styled.div`
   svg {
     font-size: 32px;
     margin-bottom: 16px;
-    color: ${props => props.iconColor};
+    color: ${props => props['data-icon-color']};
   }
 
   &:hover {

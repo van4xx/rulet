@@ -55,7 +55,14 @@ const Star = styled.div`
   }
 `;
 
-const Planet = styled.div`
+const Planet = styled.div.attrs(props => ({
+  'data-orbit-radius': props.orbitRadius,
+  'data-orbit-speed': props.orbitSpeed,
+  'data-rings': props.rings,
+  'data-rings-color': props.ringsColor,
+  'data-glow-color': props.glowColor,
+  'data-tail-length': props.tailLength
+}))`
   position: absolute;
   width: ${props => props.size}px;
   height: ${props => props.size}px;
