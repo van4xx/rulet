@@ -9,7 +9,7 @@ const PageContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  color: white;
+  color: ${props => props.theme === 'day' ? '#1a237e' : 'white'};
   padding: 100px 20px 40px;
 `;
 
@@ -23,24 +23,32 @@ const Title = styled.h1`
   font-size: 3rem;
   margin-bottom: 2rem;
   text-align: center;
-  background: linear-gradient(to right, #64ffda, #00b0ff);
+  background: ${props => props.theme === 'day' 
+    ? 'linear-gradient(to right, #1a237e, #0d47a1)'
+    : 'linear-gradient(to right, #64ffda, #00b0ff)'};
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  text-shadow: 0 0 15px rgba(100, 255, 218, 0.3);
+  text-shadow: ${props => props.theme === 'day'
+    ? '0 0 15px rgba(26, 35, 126, 0.3)'
+    : '0 0 15px rgba(100, 255, 218, 0.3)'};
 `;
 
 const Section = styled.section`
-  background: rgba(0, 0, 0, 0.5);
+  background: ${props => props.theme === 'day'
+    ? 'rgba(255, 255, 255, 0.9)'
+    : 'rgba(0, 0, 0, 0.5)'};
   backdrop-filter: blur(10px);
   border-radius: 20px;
   padding: 2rem;
   margin-bottom: 2rem;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid ${props => props.theme === 'day'
+    ? 'rgba(26, 35, 126, 0.2)'
+    : 'rgba(255, 255, 255, 0.1)'};
 
   h2 {
     font-size: 1.8rem;
     margin-bottom: 1.5rem;
-    color: #64ffda;
+    color: ${props => props.theme === 'day' ? '#1a237e' : '#64ffda'};
     display: flex;
     align-items: center;
     gap: 1rem;
@@ -52,7 +60,7 @@ const Section = styled.section`
 
   h3 {
     font-size: 1.3rem;
-    color: #64ffda;
+    color: ${props => props.theme === 'day' ? '#1a237e' : '#64ffda'};
     margin: 1.5rem 0 1rem;
   }
 
@@ -60,7 +68,9 @@ const Section = styled.section`
     font-size: 1.1rem;
     line-height: 1.6;
     margin-bottom: 1rem;
-    color: rgba(255, 255, 255, 0.9);
+    color: ${props => props.theme === 'day' 
+      ? 'rgba(26, 35, 126, 0.9)'
+      : 'rgba(255, 255, 255, 0.9)'};
   }
 
   ul {
@@ -72,21 +82,27 @@ const Section = styled.section`
       margin-bottom: 0.8rem;
       padding-left: 1.5rem;
       position: relative;
-      color: rgba(255, 255, 255, 0.9);
+      color: ${props => props.theme === 'day'
+        ? 'rgba(26, 35, 126, 0.9)'
+        : 'rgba(255, 255, 255, 0.9)'};
 
       &::before {
         content: '•';
         position: absolute;
         left: 0;
-        color: #64ffda;
+        color: ${props => props.theme === 'day' ? '#1a237e' : '#64ffda'};
       }
     }
   }
 `;
 
 const InfoBox = styled.div`
-  background: rgba(100, 255, 218, 0.1);
-  border: 1px solid rgba(100, 255, 218, 0.3);
+  background: ${props => props.theme === 'day'
+    ? 'rgba(26, 35, 126, 0.1)'
+    : 'rgba(100, 255, 218, 0.1)'};
+  border: 1px solid ${props => props.theme === 'day'
+    ? 'rgba(26, 35, 126, 0.3)'
+    : 'rgba(100, 255, 218, 0.3)'};
   border-radius: 10px;
   padding: 1rem;
   margin: 1rem 0;
@@ -106,19 +122,19 @@ const LastUpdate = styled.p`
 
 const Privacy = ({ currentTheme }) => {
   return (
-    <PageContainer>
+    <PageContainer theme={currentTheme}>
       <SpaceBackground theme={currentTheme} />
       <Content>
-        <Title>Политика конфиденциальности</Title>
+        <Title theme={currentTheme}>Политика конфиденциальности</Title>
 
-        <Section>
+        <Section theme={currentTheme}>
           <h2><FaShieldAlt /> Введение</h2>
           <p>
             Мы серьезно относимся к защите ваших персональных данных. Эта политика
             конфиденциальности объясняет, какую информацию мы собираем, как ее
             используем и как защищаем.
           </p>
-          <InfoBox>
+          <InfoBox theme={currentTheme}>
             <p>
               Используя наш сервис, вы соглашаетесь с условиями данной политики
               конфиденциальности.
@@ -126,7 +142,7 @@ const Privacy = ({ currentTheme }) => {
           </InfoBox>
         </Section>
 
-        <Section>
+        <Section theme={currentTheme}>
           <h2><FaDatabase /> Сбор данных</h2>
           <h3>Информация, которую мы собираем:</h3>
           <ul>
@@ -143,7 +159,7 @@ const Privacy = ({ currentTheme }) => {
           </ul>
         </Section>
 
-        <Section>
+        <Section theme={currentTheme}>
           <h2><FaUserSecret /> Использование данных</h2>
           <p>
             Собранные данные используются для:
@@ -157,7 +173,7 @@ const Privacy = ({ currentTheme }) => {
           </ul>
         </Section>
 
-        <Section>
+        <Section theme={currentTheme}>
           <h2><FaCookie /> Файлы cookie</h2>
           <p>
             Мы используем файлы cookie для улучшения работы сервиса. Они помогают нам:
@@ -168,7 +184,7 @@ const Privacy = ({ currentTheme }) => {
             <li>Анализировать производительность сайта</li>
             <li>Улучшать пользовательский опыт</li>
           </ul>
-          <InfoBox>
+          <InfoBox theme={currentTheme}>
             <p>
               Вы можете отключить файлы cookie в настройках браузера, но это может
               повлиять на функциональность сервиса.
@@ -176,7 +192,7 @@ const Privacy = ({ currentTheme }) => {
           </InfoBox>
         </Section>
 
-        <Section>
+        <Section theme={currentTheme}>
           <h2><FaShieldAlt /> Защита данных</h2>
           <p>
             Мы применяем следующие меры для защиты ваших данных:

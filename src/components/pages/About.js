@@ -17,37 +17,38 @@ const Content = styled.div`
   max-width: 1000px;
   width: 100%;
   z-index: 1;
+  color: ${props => props.theme === 'day' ? '#1a237e' : 'white'};
 `;
 
 const Title = styled.h1`
   font-size: 3rem;
   margin-bottom: 2rem;
   text-align: center;
-  background: linear-gradient(to right, #64ffda, #00b0ff);
+  background: ${props => props.theme === 'day' ? 'linear-gradient(to right, #1a237e, #0d47a1)' : 'linear-gradient(to right, #64ffda, #00b0ff)'};
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  text-shadow: 0 0 15px rgba(100, 255, 218, 0.3);
+  text-shadow: ${props => props.theme === 'day' ? '0 0 15px rgba(26, 35, 126, 0.3)' : '0 0 15px rgba(100, 255, 218, 0.3)'};
 `;
 
 const Section = styled.section`
-  background: rgba(0, 0, 0, 0.5);
+  background: ${props => props.theme === 'day' ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.5)'};
   backdrop-filter: blur(10px);
   border-radius: 20px;
   padding: 2rem;
   margin-bottom: 2rem;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid ${props => props.theme === 'day' ? 'rgba(26, 35, 126, 0.2)' : 'rgba(255, 255, 255, 0.1)'};
 
   h2 {
     font-size: 2rem;
     margin-bottom: 1.5rem;
-    color: #64ffda;
+    color: ${props => props.theme === 'day' ? '#1a237e' : '#64ffda'};
   }
 
   p {
     font-size: 1.1rem;
     line-height: 1.6;
     margin-bottom: 1rem;
-    color: rgba(255, 255, 255, 0.9);
+    color: ${props => props.theme === 'day' ? '#1a237e' : 'rgba(255, 255, 255, 0.9)'};
   }
 `;
 
@@ -124,14 +125,16 @@ const TeamMember = styled.div`
   }
 `;
 
-const About = ({ currentTheme }) => {
+const About = () => {
+  const theme = window.localStorage.getItem('theme') || 'night';
+  
   return (
     <PageContainer>
-      <SpaceBackground theme={currentTheme} />
-      <Content>
-        <Title>О нас</Title>
+      <SpaceBackground theme={theme} />
+      <Content theme={theme}>
+        <Title theme={theme}>О нас</Title>
         
-        <Section>
+        <Section theme={theme}>
           <h2>Наша миссия</h2>
           <p>
             Мы создаем уникальное пространство для общения, где каждый может найти новых друзей
@@ -163,7 +166,7 @@ const About = ({ currentTheme }) => {
           </StatsGrid>
         </Section>
 
-        <Section>
+        <Section theme={theme}>
           <h2>История проекта</h2>
           <p>
             Проект Ruletka был основан в 2023 году группой энтузиастов, объединенных идеей
@@ -178,7 +181,7 @@ const About = ({ currentTheme }) => {
           </p>
         </Section>
 
-        <Section>
+        <Section theme={theme}>
           <h2>Наша команда</h2>
           <TeamGrid>
             <TeamMember>
@@ -199,7 +202,7 @@ const About = ({ currentTheme }) => {
           </TeamGrid>
         </Section>
 
-        <Section>
+        <Section theme={theme}>
           <h2>Наши ценности</h2>
           <p>
             <strong>Безопасность</strong> - Мы обеспечиваем максимальную защиту личных данных

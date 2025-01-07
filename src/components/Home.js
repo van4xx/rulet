@@ -25,31 +25,26 @@ const Content = styled.div`
   width: 100%;
   padding: 0 20px;
   margin-bottom: 0;
+  color: ${props => props.theme === 'day' ? '#1a237e' : 'white'};
 `;
 
 const Title = styled.h1`
   font-size: 4rem;
   margin-bottom: 1rem;
-  background: linear-gradient(to right, #FFD700, #FFA500);
+  background: ${props => props.theme === 'day' 
+    ? 'linear-gradient(to right, #1a237e, #0d47a1)'
+    : 'linear-gradient(to right, #FFD700, #FFA500)'};
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  text-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
-  animation: glow 2s ease-in-out infinite alternate;
-
-  @keyframes glow {
-    from {
-      text-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
-    }
-    to {
-      text-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
-    }
-  }
+  text-shadow: ${props => props.theme === 'day'
+    ? '0 0 20px rgba(26, 35, 126, 0.3)'
+    : '0 0 20px rgba(255, 215, 0, 0.3)'};
 `;
 
 const Subtitle = styled.p`
   font-size: 1.5rem;
   margin-bottom: 2rem;
-  color: rgba(255, 255, 255, 0.9);
+  color: ${props => props.theme === 'day' ? '#1a237e' : 'rgba(255, 255, 255, 0.9)'};
   max-width: 800px;
   margin: 0 auto 2rem;
 `;
@@ -82,22 +77,28 @@ const StatsGrid = styled.div`
 `;
 
 const StatBox = styled.div`
-  background: rgba(255, 255, 255, 0.1);
+  background: ${props => props.theme === 'day'
+    ? 'rgba(255, 255, 255, 0.9)'
+    : 'rgba(255, 255, 255, 0.1)'};
   backdrop-filter: blur(10px);
   padding: 2rem;
   border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid ${props => props.theme === 'day'
+    ? 'rgba(26, 35, 126, 0.2)'
+    : 'rgba(255, 255, 255, 0.1)'};
   transition: all 0.3s ease;
 
   &:hover {
     transform: translateY(-5px);
-    background: rgba(255, 255, 255, 0.15);
+    background: ${props => props.theme === 'day'
+      ? 'rgba(255, 255, 255, 0.95)'
+      : 'rgba(255, 255, 255, 0.15)'};
   }
 
   svg {
     font-size: 2.5rem;
     margin-bottom: 1rem;
-    color: ${props => props.iconColor || '#FFD700'};
+    color: ${props => props.theme === 'day' ? '#1a237e' : props.iconColor || '#FFD700'};
   }
 `;
 
@@ -105,14 +106,16 @@ const StatNumber = styled.div`
   font-size: 2rem;
   font-weight: bold;
   margin: 0.5rem 0;
-  background: linear-gradient(to right, #FFD700, #FFA500);
+  background: ${props => props.theme === 'day'
+    ? 'linear-gradient(to right, #1a237e, #0d47a1)'
+    : 'linear-gradient(to right, #FFD700, #FFA500)'};
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 `;
 
 const StatLabel = styled.div`
   font-size: 1.1rem;
-  color: rgba(255, 255, 255, 0.8);
+  color: ${props => props.theme === 'day' ? '#1a237e' : 'rgba(255, 255, 255, 0.8)'};
 `;
 
 const FeatureGrid = styled.div`
@@ -123,21 +126,25 @@ const FeatureGrid = styled.div`
 `;
 
 const FeatureBox = styled.div`
-  background: rgba(0, 0, 0, 0.3);
+  background: ${props => props.theme === 'day'
+    ? 'rgba(255, 255, 255, 0.9)'
+    : 'rgba(0, 0, 0, 0.3)'};
   backdrop-filter: blur(10px);
   padding: 2rem;
   border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid ${props => props.theme === 'day'
+    ? 'rgba(26, 35, 126, 0.2)'
+    : 'rgba(255, 255, 255, 0.1)'};
   text-align: left;
 
   h3 {
     font-size: 1.5rem;
     margin-bottom: 1rem;
-    color: #FFD700;
+    color: ${props => props.theme === 'day' ? '#1a237e' : '#FFD700'};
   }
 
   p {
-    color: rgba(255, 255, 255, 0.8);
+    color: ${props => props.theme === 'day' ? '#1a237e' : 'rgba(255, 255, 255, 0.8)'};
     line-height: 1.6;
   }
 `;
@@ -151,10 +158,14 @@ const InfoSection = styled.div`
 const InfoTitle = styled.h2`
   font-size: 2.5rem;
   margin-bottom: 2rem;
-  background: linear-gradient(to right, #64ffda, #00b0ff);
+  background: ${props => props.theme === 'day'
+    ? 'linear-gradient(to right, #1a237e, #0d47a1)'
+    : 'linear-gradient(to right, #64ffda, #00b0ff)'};
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  text-shadow: 0 0 15px rgba(100, 255, 218, 0.3);
+  text-shadow: ${props => props.theme === 'day'
+    ? '0 0 15px rgba(26, 35, 126, 0.3)'
+    : '0 0 15px rgba(100, 255, 218, 0.3)'};
 `;
 
 const InfoGrid = styled.div`
@@ -165,34 +176,40 @@ const InfoGrid = styled.div`
 `;
 
 const InfoCard = styled.div`
-  background: rgba(0, 0, 0, 0.4);
+  background: ${props => props.theme === 'day'
+    ? 'rgba(255, 255, 255, 0.9)'
+    : 'rgba(0, 0, 0, 0.4)'};
   backdrop-filter: blur(10px);
   padding: 2rem;
   border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid ${props => props.theme === 'day'
+    ? 'rgba(26, 35, 126, 0.2)'
+    : 'rgba(255, 255, 255, 0.1)'};
   transition: all 0.3s ease;
 
   &:hover {
     transform: translateY(-5px);
-    border-color: rgba(100, 255, 218, 0.3);
+    border-color: ${props => props.theme === 'day'
+      ? 'rgba(26, 35, 126, 0.3)'
+      : 'rgba(100, 255, 218, 0.3)'};
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
   }
 
   svg {
     font-size: 2.5rem;
-    color: #64ffda;
+    color: ${props => props.theme === 'day' ? '#1a237e' : '#64ffda'};
     margin-bottom: 1rem;
   }
 `;
 
 const InfoCardTitle = styled.h3`
   font-size: 1.5rem;
-  color: #fff;
+  color: ${props => props.theme === 'day' ? '#1a237e' : '#fff'};
   margin-bottom: 1rem;
 `;
 
 const InfoCardText = styled.p`
-  color: rgba(255, 255, 255, 0.8);
+  color: ${props => props.theme === 'day' ? '#1a237e' : 'rgba(255, 255, 255, 0.8)'};
   line-height: 1.6;
   font-size: 1.1rem;
 `;
@@ -248,30 +265,30 @@ const Home = ({ currentTheme, onlineUsers }) => {
   return (
     <Container>
       <SpaceBackground theme={currentTheme} />
-      <Content>
-        <Title>Ruletka</Title>
-        <Subtitle>
+      <Content theme={currentTheme}>
+        <Title theme={currentTheme}>Ruletka</Title>
+        <Subtitle theme={currentTheme}>
           Исследуйте космические просторы общения в нашем уникальном видеочате. 
           Встречайте новых людей со всей галактики в захватывающем космическом приключении!
         </Subtitle>
 
         <StatsGrid>
-          <StatBox iconColor="#FF6B6B">
+          <StatBox theme={currentTheme} iconColor="#FF6B6B">
             <FaUsers />
-            <StatNumber>{onlineUsers}</StatNumber>
-            <StatLabel>Онлайн пользователей</StatLabel>
+            <StatNumber theme={currentTheme}>{onlineUsers}</StatNumber>
+            <StatLabel theme={currentTheme}>Онлайн пользователей</StatLabel>
           </StatBox>
-          <StatBox iconColor="#4ECDC4">
+          <StatBox theme={currentTheme} iconColor="#4ECDC4">
             <FaVideo />
             <StatNumber>1M+</StatNumber>
             <StatLabel>Видеочатов в день</StatLabel>
           </StatBox>
-          <StatBox iconColor="#FFD93D">
+          <StatBox theme={currentTheme} iconColor="#FFD93D">
             <FaGlobe />
             <StatNumber>150+</StatNumber>
             <StatLabel>Стран</StatLabel>
           </StatBox>
-          <StatBox iconColor="#FF9A8B">
+          <StatBox theme={currentTheme} iconColor="#FF9A8B">
             <FaHeart />
             <StatNumber>500K+</StatNumber>
             <StatLabel>Счастливых знакомств</StatLabel>
@@ -280,7 +297,7 @@ const Home = ({ currentTheme, onlineUsers }) => {
 
         <StartButton to="/chat">
           <FaRocket style={{ marginRight: '10px' }} />
-          Начать космическое путешествие
+          Начать путешествие
         </StartButton>
 
         <InfoSection>

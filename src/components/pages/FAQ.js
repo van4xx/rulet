@@ -9,7 +9,7 @@ const PageContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  color: white;
+  color: ${props => props.theme === 'light' ? '#1a237e' : 'white'};
   padding: 100px 20px 40px;
 `;
 
@@ -23,24 +23,34 @@ const Title = styled.h1`
   font-size: 3rem;
   margin-bottom: 2rem;
   text-align: center;
-  background: linear-gradient(to right, #64ffda, #00b0ff);
+  background: ${props => props.theme === 'light' 
+    ? 'linear-gradient(to right, #1a237e, #0d47a1)'
+    : 'linear-gradient(to right, #64ffda, #00b0ff)'};
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  text-shadow: 0 0 15px rgba(100, 255, 218, 0.3);
+  text-shadow: ${props => props.theme === 'light'
+    ? '0 0 15px rgba(26, 35, 126, 0.3)'
+    : '0 0 15px rgba(100, 255, 218, 0.3)'};
 `;
 
 const FAQSection = styled.div`
-  background: rgba(0, 0, 0, 0.5);
+  background: ${props => props.theme === 'light'
+    ? 'rgba(255, 255, 255, 0.9)'
+    : 'rgba(0, 0, 0, 0.5)'};
   backdrop-filter: blur(10px);
   border-radius: 20px;
   padding: 2rem;
   margin-bottom: 2rem;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid ${props => props.theme === 'light'
+    ? 'rgba(26, 35, 126, 0.2)'
+    : 'rgba(255, 255, 255, 0.1)'};
 `;
 
 const FAQItem = styled.div`
   margin-bottom: 1rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid ${props => props.theme === 'light'
+    ? 'rgba(26, 35, 126, 0.1)'
+    : 'rgba(255, 255, 255, 0.1)'};
   padding-bottom: 1rem;
 
   &:last-child {
@@ -56,22 +66,26 @@ const Question = styled.div`
   align-items: center;
   cursor: pointer;
   padding: 1rem;
-  background: rgba(255, 255, 255, 0.05);
+  background: ${props => props.theme === 'light'
+    ? 'rgba(26, 35, 126, 0.05)'
+    : 'rgba(255, 255, 255, 0.05)'};
   border-radius: 10px;
   transition: all 0.3s ease;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: ${props => props.theme === 'light'
+      ? 'rgba(26, 35, 126, 0.1)'
+      : 'rgba(255, 255, 255, 0.1)'};
   }
 
   h3 {
     margin: 0;
     font-size: 1.2rem;
-    color: #64ffda;
+    color: ${props => props.theme === 'light' ? '#1a237e' : '#64ffda'};
   }
 
   svg {
-    color: #64ffda;
+    color: ${props => props.theme === 'light' ? '#1a237e' : '#64ffda'};
     transition: transform 0.3s ease;
   }
 `;
@@ -82,12 +96,14 @@ const Answer = styled.div`
   overflow: hidden;
   transition: all 0.3s ease;
   opacity: ${props => props.isOpen ? '1' : '0'};
-  color: rgba(255, 255, 255, 0.9);
+  color: ${props => props.theme === 'light' 
+    ? 'rgba(26, 35, 126, 0.9)'
+    : 'rgba(255, 255, 255, 0.9)'};
   line-height: 1.6;
 `;
 
 const CategoryTitle = styled.h2`
-  color: #64ffda;
+  color: ${props => props.theme === 'light' ? '#1a237e' : '#64ffda'};
   margin-bottom: 1.5rem;
   font-size: 1.8rem;
   text-align: center;
@@ -148,50 +164,50 @@ const FAQ = ({ currentTheme }) => {
   };
 
   return (
-    <PageContainer>
+    <PageContainer theme={currentTheme}>
       <SpaceBackground theme={currentTheme} />
       <Content>
-        <Title>Часто задаваемые вопросы</Title>
+        <Title theme={currentTheme}>Часто задаваемые вопросы</Title>
 
-        <FAQSection>
-          <CategoryTitle>Общие вопросы</CategoryTitle>
+        <FAQSection theme={currentTheme}>
+          <CategoryTitle theme={currentTheme}>Общие вопросы</CategoryTitle>
           {faqData.general.map(item => (
-            <FAQItem key={item.id}>
-              <Question onClick={() => toggleItem(item.id)}>
+            <FAQItem key={item.id} theme={currentTheme}>
+              <Question onClick={() => toggleItem(item.id)} theme={currentTheme}>
                 <h3>{item.question}</h3>
                 {openItems[item.id] ? <FaChevronUp /> : <FaChevronDown />}
               </Question>
-              <Answer isOpen={openItems[item.id]}>
+              <Answer isOpen={openItems[item.id]} theme={currentTheme}>
                 {item.answer}
               </Answer>
             </FAQItem>
           ))}
         </FAQSection>
 
-        <FAQSection>
-          <CategoryTitle>Технические вопросы</CategoryTitle>
+        <FAQSection theme={currentTheme}>
+          <CategoryTitle theme={currentTheme}>Технические вопросы</CategoryTitle>
           {faqData.technical.map(item => (
-            <FAQItem key={item.id}>
-              <Question onClick={() => toggleItem(item.id)}>
+            <FAQItem key={item.id} theme={currentTheme}>
+              <Question onClick={() => toggleItem(item.id)} theme={currentTheme}>
                 <h3>{item.question}</h3>
                 {openItems[item.id] ? <FaChevronUp /> : <FaChevronDown />}
               </Question>
-              <Answer isOpen={openItems[item.id]}>
+              <Answer isOpen={openItems[item.id]} theme={currentTheme}>
                 {item.answer}
               </Answer>
             </FAQItem>
           ))}
         </FAQSection>
 
-        <FAQSection>
-          <CategoryTitle>Конфиденциальность и безопасность</CategoryTitle>
+        <FAQSection theme={currentTheme}>
+          <CategoryTitle theme={currentTheme}>Конфиденциальность и безопасность</CategoryTitle>
           {faqData.privacy.map(item => (
-            <FAQItem key={item.id}>
-              <Question onClick={() => toggleItem(item.id)}>
+            <FAQItem key={item.id} theme={currentTheme}>
+              <Question onClick={() => toggleItem(item.id)} theme={currentTheme}>
                 <h3>{item.question}</h3>
                 {openItems[item.id] ? <FaChevronUp /> : <FaChevronDown />}
               </Question>
-              <Answer isOpen={openItems[item.id]}>
+              <Answer isOpen={openItems[item.id]} theme={currentTheme}>
                 {item.answer}
               </Answer>
             </FAQItem>

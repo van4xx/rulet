@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import SpaceBackground from '../SpaceBackground';
 import { FaEnvelope, FaComment, FaCheck, FaExclamationTriangle } from 'react-icons/fa';
@@ -9,7 +9,7 @@ const PageContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  color: white;
+  color: ${props => props.theme === 'light' ? '#1a237e' : 'white'};
   padding: 100px 20px 40px;
 `;
 
@@ -23,24 +23,32 @@ const Title = styled.h1`
   font-size: 3rem;
   margin-bottom: 2rem;
   text-align: center;
-  background: linear-gradient(to right, #64ffda, #00b0ff);
+  background: ${props => props.theme === 'light' 
+    ? 'linear-gradient(to right, #1a237e, #0d47a1)'
+    : 'linear-gradient(to right, #64ffda, #00b0ff)'};
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  text-shadow: 0 0 15px rgba(100, 255, 218, 0.3);
+  text-shadow: ${props => props.theme === 'light'
+    ? '0 0 15px rgba(26, 35, 126, 0.3)'
+    : '0 0 15px rgba(100, 255, 218, 0.3)'};
 `;
 
 const Section = styled.section`
-  background: rgba(0, 0, 0, 0.5);
+  background: ${props => props.theme === 'light'
+    ? 'rgba(255, 255, 255, 0.9)'
+    : 'rgba(0, 0, 0, 0.5)'};
   backdrop-filter: blur(10px);
   border-radius: 20px;
   padding: 2rem;
   margin-bottom: 2rem;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid ${props => props.theme === 'light'
+    ? 'rgba(26, 35, 126, 0.2)'
+    : 'rgba(255, 255, 255, 0.1)'};
 
   h2 {
     font-size: 1.8rem;
     margin-bottom: 1.5rem;
-    color: #64ffda;
+    color: ${props => props.theme === 'light' ? '#1a237e' : '#64ffda'};
     display: flex;
     align-items: center;
     gap: 1rem;
@@ -54,7 +62,9 @@ const Section = styled.section`
     font-size: 1.1rem;
     line-height: 1.6;
     margin-bottom: 1rem;
-    color: rgba(255, 255, 255, 0.9);
+    color: ${props => props.theme === 'light'
+      ? 'rgba(26, 35, 126, 0.9)'
+      : 'rgba(255, 255, 255, 0.9)'};
   }
 `;
 
@@ -172,7 +182,14 @@ const Message = styled.div`
   }
 `;
 
-const Contact = ({ currentTheme }) => {
+const Contact = () => {
+  const [theme, setTheme] = useState('dark');
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    setTheme(savedTheme);
+  }, []);
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -206,12 +223,12 @@ const Contact = ({ currentTheme }) => {
   };
 
   return (
-    <PageContainer>
-      <SpaceBackground theme={currentTheme} />
+    <PageContainer theme={theme}>
+      <SpaceBackground theme={theme} />
       <Content>
-        <Title>Связаться с нами</Title>
+        <Title theme={theme}>Связаться с нами</Title>
 
-        <Section>
+        <Section theme={theme}>
           <h2><FaEnvelope /> Напишите нам</h2>
           <p>
             У вас есть вопросы, предложения или вы хотите сообщить о проблеме?

@@ -9,7 +9,7 @@ const PageContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  color: white;
+  color: ${props => props.theme === 'light' ? '#1a237e' : 'white'};
   padding: 100px 20px 40px;
 `;
 
@@ -23,24 +23,32 @@ const Title = styled.h1`
   font-size: 3rem;
   margin-bottom: 2rem;
   text-align: center;
-  background: linear-gradient(to right, #64ffda, #00b0ff);
+  background: ${props => props.theme === 'light' 
+    ? 'linear-gradient(to right, #1a237e, #0d47a1)'
+    : 'linear-gradient(to right, #64ffda, #00b0ff)'};
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  text-shadow: 0 0 15px rgba(100, 255, 218, 0.3);
+  text-shadow: ${props => props.theme === 'light'
+    ? '0 0 15px rgba(26, 35, 126, 0.3)'
+    : '0 0 15px rgba(100, 255, 218, 0.3)'};
 `;
 
 const Section = styled.section`
-  background: rgba(0, 0, 0, 0.5);
+  background: ${props => props.theme === 'light'
+    ? 'rgba(255, 255, 255, 0.8)'
+    : 'rgba(0, 0, 0, 0.5)'};
   backdrop-filter: blur(10px);
   border-radius: 20px;
   padding: 2rem;
   margin-bottom: 2rem;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid ${props => props.theme === 'light'
+    ? 'rgba(26, 35, 126, 0.2)'
+    : 'rgba(255, 255, 255, 0.1)'};
 
   h2 {
     font-size: 1.8rem;
     margin-bottom: 1.5rem;
-    color: #64ffda;
+    color: ${props => props.theme === 'light' ? '#1a237e' : '#64ffda'};
     display: flex;
     align-items: center;
     gap: 1rem;
@@ -52,7 +60,7 @@ const Section = styled.section`
 
   h3 {
     font-size: 1.3rem;
-    color: #64ffda;
+    color: ${props => props.theme === 'light' ? '#1a237e' : '#64ffda'};
     margin: 1.5rem 0 1rem;
   }
 
@@ -60,7 +68,9 @@ const Section = styled.section`
     font-size: 1.1rem;
     line-height: 1.6;
     margin-bottom: 1rem;
-    color: rgba(255, 255, 255, 0.9);
+    color: ${props => props.theme === 'light'
+      ? 'rgba(26, 35, 126, 0.9)'
+      : 'rgba(255, 255, 255, 0.9)'};
   }
 
   ul {
@@ -72,20 +82,24 @@ const Section = styled.section`
       margin-bottom: 0.8rem;
       padding-left: 1.5rem;
       position: relative;
-      color: rgba(255, 255, 255, 0.9);
+      color: ${props => props.theme === 'light'
+        ? 'rgba(26, 35, 126, 0.9)'
+        : 'rgba(255, 255, 255, 0.9)'};
 
       &::before {
         content: '•';
         position: absolute;
         left: 0;
-        color: #64ffda;
+        color: ${props => props.theme === 'light' ? '#1a237e' : '#64ffda'};
       }
     }
   }
 `;
 
 const WarningBox = styled.div`
-  background: rgba(255, 87, 34, 0.1);
+  background: ${props => props.theme === 'light'
+    ? 'rgba(255, 87, 34, 0.05)'
+    : 'rgba(255, 87, 34, 0.1)'};
   border: 1px solid rgba(255, 87, 34, 0.3);
   border-radius: 10px;
   padding: 1rem;
@@ -115,12 +129,12 @@ const LastUpdate = styled.p`
 
 const Terms = ({ currentTheme }) => {
   return (
-    <PageContainer>
+    <PageContainer theme={currentTheme}>
       <SpaceBackground theme={currentTheme} />
       <Content>
-        <Title>Условия использования</Title>
+        <Title theme={currentTheme}>Условия использования</Title>
 
-        <Section>
+        <Section theme={currentTheme}>
           <h2><FaShieldAlt /> Общие положения</h2>
           <p>
             Добро пожаловать в Ruletka! Используя наш сервис, вы соглашаетесь с
@@ -134,7 +148,7 @@ const Terms = ({ currentTheme }) => {
           </p>
         </Section>
 
-        <Section>
+        <Section theme={currentTheme}>
           <h2><FaUserFriends /> Правила поведения</h2>
           <p>
             Все пользователи обязаны соблюдать следующие правила при использовании
@@ -148,7 +162,7 @@ const Terms = ({ currentTheme }) => {
             <li>Не демонстрировать неприемлемый или шокирующий контент</li>
           </ul>
 
-          <WarningBox>
+          <WarningBox theme={currentTheme}>
             <FaExclamationTriangle />
             <p>
               Нарушение правил может привести к временной или постоянной
@@ -157,7 +171,7 @@ const Terms = ({ currentTheme }) => {
           </WarningBox>
         </Section>
 
-        <Section>
+        <Section theme={currentTheme}>
           <h2><FaBan /> Запрещенный контент</h2>
           <p>
             На платформе строго запрещено:
@@ -171,7 +185,7 @@ const Terms = ({ currentTheme }) => {
           </ul>
         </Section>
 
-        <Section>
+        <Section theme={currentTheme}>
           <h2><FaShieldAlt /> Конфиденциальность и безопасность</h2>
           <h3>Сбор данных</h3>
           <p>

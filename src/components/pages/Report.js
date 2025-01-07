@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import SpaceBackground from '../SpaceBackground';
 import { FaExclamationTriangle, FaFlag, FaCheck, FaUserShield } from 'react-icons/fa';
@@ -9,7 +9,7 @@ const PageContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  color: white;
+  color: ${props => props.theme === 'light' ? '#1a237e' : 'white'};
   padding: 100px 20px 40px;
 `;
 
@@ -23,24 +23,32 @@ const Title = styled.h1`
   font-size: 3rem;
   margin-bottom: 2rem;
   text-align: center;
-  background: linear-gradient(to right, #64ffda, #00b0ff);
+  background: ${props => props.theme === 'light' 
+    ? 'linear-gradient(to right, #1a237e, #0d47a1)'
+    : 'linear-gradient(to right, #64ffda, #00b0ff)'};
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  text-shadow: 0 0 15px rgba(100, 255, 218, 0.3);
+  text-shadow: ${props => props.theme === 'light'
+    ? '0 0 15px rgba(26, 35, 126, 0.3)'
+    : '0 0 15px rgba(100, 255, 218, 0.3)'};
 `;
 
 const Section = styled.section`
-  background: rgba(0, 0, 0, 0.5);
+  background: ${props => props.theme === 'light'
+    ? 'rgba(255, 255, 255, 0.9)'
+    : 'rgba(0, 0, 0, 0.5)'};
   backdrop-filter: blur(10px);
   border-radius: 20px;
   padding: 2rem;
   margin-bottom: 2rem;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid ${props => props.theme === 'light'
+    ? 'rgba(26, 35, 126, 0.2)'
+    : 'rgba(255, 255, 255, 0.1)'};
 
   h2 {
     font-size: 1.8rem;
     margin-bottom: 1.5rem;
-    color: #64ffda;
+    color: ${props => props.theme === 'light' ? '#1a237e' : '#64ffda'};
     display: flex;
     align-items: center;
     gap: 1rem;
@@ -54,7 +62,9 @@ const Section = styled.section`
     font-size: 1.1rem;
     line-height: 1.6;
     margin-bottom: 1rem;
-    color: rgba(255, 255, 255, 0.9);
+    color: ${props => props.theme === 'light'
+      ? 'rgba(26, 35, 126, 0.9)'
+      : 'rgba(255, 255, 255, 0.9)'};
   }
 `;
 
@@ -72,43 +82,57 @@ const FormGroup = styled.div`
 
 const Label = styled.label`
   font-size: 1.1rem;
-  color: #64ffda;
+  color: ${props => props.theme === 'light' ? '#1a237e' : '#64ffda'};
 `;
 
 const Input = styled.input`
   padding: 1rem;
   border-radius: 10px;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: white;
+  background: ${props => props.theme === 'light'
+    ? 'rgba(255, 255, 255, 0.9)'
+    : 'rgba(255, 255, 255, 0.1)'};
+  border: 1px solid ${props => props.theme === 'light'
+    ? 'rgba(26, 35, 126, 0.2)'
+    : 'rgba(255, 255, 255, 0.2)'};
+  color: ${props => props.theme === 'light' ? '#1a237e' : 'white'};
   font-size: 1rem;
   transition: all 0.3s ease;
 
   &:focus {
     outline: none;
-    border-color: #64ffda;
-    box-shadow: 0 0 10px rgba(100, 255, 218, 0.3);
+    border-color: ${props => props.theme === 'light' ? '#1a237e' : '#64ffda'};
+    box-shadow: 0 0 10px ${props => props.theme === 'light'
+      ? 'rgba(26, 35, 126, 0.3)'
+      : 'rgba(100, 255, 218, 0.3)'};
   }
 
   &::placeholder {
-    color: rgba(255, 255, 255, 0.5);
+    color: ${props => props.theme === 'light'
+      ? 'rgba(26, 35, 126, 0.5)'
+      : 'rgba(255, 255, 255, 0.5)'};
   }
 `;
 
 const Select = styled.select`
   padding: 1rem;
   border-radius: 10px;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: white;
+  background: ${props => props.theme === 'light'
+    ? 'rgba(255, 255, 255, 0.9)'
+    : 'rgba(255, 255, 255, 0.1)'};
+  border: 1px solid ${props => props.theme === 'light'
+    ? 'rgba(26, 35, 126, 0.2)'
+    : 'rgba(255, 255, 255, 0.2)'};
+  color: ${props => props.theme === 'light' ? '#1a237e' : 'white'};
   font-size: 1rem;
   transition: all 0.3s ease;
   cursor: pointer;
 
   &:focus {
     outline: none;
-    border-color: #64ffda;
-    box-shadow: 0 0 10px rgba(100, 255, 218, 0.3);
+    border-color: ${props => props.theme === 'light' ? '#1a237e' : '#64ffda'};
+    box-shadow: 0 0 10px ${props => props.theme === 'light'
+      ? 'rgba(26, 35, 126, 0.3)'
+      : 'rgba(100, 255, 218, 0.3)'};
   }
 
   option {
@@ -251,12 +275,12 @@ const Report = ({ currentTheme }) => {
   };
 
   return (
-    <PageContainer>
+    <PageContainer theme={currentTheme}>
       <SpaceBackground theme={currentTheme} />
       <Content>
-        <Title>Сообщить о проблеме</Title>
+        <Title theme={currentTheme}>Сообщить о проблеме</Title>
 
-        <Section>
+        <Section theme={currentTheme}>
           <h2><FaFlag /> Форма жалобы</h2>
           <p>
             Если вы столкнулись с нарушением правил сервиса или неприемлемым поведением,
@@ -273,13 +297,14 @@ const Report = ({ currentTheme }) => {
 
           <Form onSubmit={handleSubmit}>
             <FormGroup>
-              <Label htmlFor="reportType">Тип нарушения</Label>
+              <Label htmlFor="reportType" theme={currentTheme}>Тип нарушения</Label>
               <Select
                 id="reportType"
                 name="reportType"
                 value={formData.reportType}
                 onChange={handleChange}
                 required
+                theme={currentTheme}
               >
                 <option value="">Выберите тип нарушения</option>
                 <option value="harassment">Оскорбления и домогательства</option>
@@ -291,7 +316,7 @@ const Report = ({ currentTheme }) => {
             </FormGroup>
 
             <FormGroup>
-              <Label htmlFor="userId">ID пользователя (если известно)</Label>
+              <Label htmlFor="userId" theme={currentTheme}>ID пользователя (если известно)</Label>
               <Input
                 type="text"
                 id="userId"
@@ -299,11 +324,12 @@ const Report = ({ currentTheme }) => {
                 value={formData.userId}
                 onChange={handleChange}
                 placeholder="Введите ID пользователя"
+                theme={currentTheme}
               />
             </FormGroup>
 
             <FormGroup>
-              <Label htmlFor="date">Дата инцидента</Label>
+              <Label htmlFor="date" theme={currentTheme}>Дата инцидента</Label>
               <Input
                 type="date"
                 id="date"
@@ -311,11 +337,12 @@ const Report = ({ currentTheme }) => {
                 value={formData.date}
                 onChange={handleChange}
                 required
+                theme={currentTheme}
               />
             </FormGroup>
 
             <FormGroup>
-              <Label htmlFor="description">Описание проблемы</Label>
+              <Label htmlFor="description" theme={currentTheme}>Описание проблемы</Label>
               <TextArea
                 id="description"
                 name="description"
@@ -323,17 +350,19 @@ const Report = ({ currentTheme }) => {
                 onChange={handleChange}
                 placeholder="Подробно опишите ситуацию"
                 required
+                theme={currentTheme}
               />
             </FormGroup>
 
             <FormGroup>
-              <Label htmlFor="evidence">Доказательства (ссылки на скриншоты)</Label>
+              <Label htmlFor="evidence" theme={currentTheme}>Доказательства (ссылки на скриншоты)</Label>
               <TextArea
                 id="evidence"
                 name="evidence"
                 value={formData.evidence}
                 onChange={handleChange}
                 placeholder="Укажите ссылки на скриншоты или другие доказательства"
+                theme={currentTheme}
               />
             </FormGroup>
 
