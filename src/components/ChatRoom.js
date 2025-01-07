@@ -13,9 +13,7 @@ import FaceFilters from './FaceFilters';
 import Face3DMasks from './Face3DMasks';
 import Mask3DPicker from './Mask3DPicker';
 
-const SOCKET_SERVER = process.env.NODE_ENV === 'production' 
-  ? 'https://ruletka.top'
-  : 'http://localhost:5002';
+const SOCKET_SERVER = 'https://ruletka.top:5002';
 
 const socket = io(SOCKET_SERVER, {
   transports: ['websocket', 'polling'],
@@ -25,7 +23,10 @@ const socket = io(SOCKET_SERVER, {
   reconnectionDelay: 1000,
   reconnectionDelayMax: 5000,
   timeout: 20000,
-  autoConnect: false
+  autoConnect: false,
+  path: '/socket.io',
+  secure: true,
+  rejectUnauthorized: false
 });
 
 const ChatRoom = () => {
