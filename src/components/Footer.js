@@ -1,35 +1,45 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import { FaGithub, FaTwitter, FaDiscord, FaTelegram, FaHeart, FaRocket, FaShieldAlt } from 'react-icons/fa';
+import { FaTelegram, FaHeart } from 'react-icons/fa';
+import { SlSocialVkontakte } from 'react-icons/sl';
 
 const FooterContainer = styled.footer`
-  position: relative;
   width: 100%;
   background: rgba(0, 0, 0, 0.7);
   backdrop-filter: blur(10px);
   color: white;
-  padding: 3rem 0 0 0;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
-  margin: 0;
 `;
 
 const FooterContent = styled.div`
-  width: 100%;
-  margin: 0;
-  padding: 0 3rem;
+  width: min(1200px, 100%);
+  margin: 0 auto;
+  padding: 48px 24px;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 3rem;
+  grid-template-columns: repeat(3, 1fr);
+  column-gap: 64px;
+  row-gap: 48px;
+
+  @media (max-width: 968px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    padding: 32px 24px;
+  }
 `;
 
 const FooterSection = styled.div`
   h3 {
-    font-size: 1.2rem;
+    font-size: 18px;
+    font-weight: 600;
     color: #64ffda;
-    margin-bottom: 1.5rem;
-    padding-bottom: 0.5rem;
+    margin-bottom: 24px;
+    padding-bottom: 8px;
     border-bottom: 2px solid rgba(100, 255, 218, 0.3);
+    margin-left: 24px;
   }
 `;
 
@@ -37,12 +47,15 @@ const FooterLink = styled(Link)`
   display: block;
   color: rgba(255, 255, 255, 0.8);
   text-decoration: none;
-  margin-bottom: 0.8rem;
-  transition: all 0.3s ease;
+  font-size: 15px;
+  line-height: 1.6;
+  margin-bottom: 12px;
+  margin-left: 48px;
+  transition: color 0.2s ease, transform 0.2s ease;
   
   &:hover {
     color: #64ffda;
-    transform: translateX(5px);
+    transform: translateX(8px);
   }
 `;
 
@@ -50,56 +63,72 @@ const ExternalLink = styled.a`
   display: block;
   color: rgba(255, 255, 255, 0.8);
   text-decoration: none;
-  margin-bottom: 0.8rem;
-  transition: all 0.3s ease;
+  font-size: 15px;
+  line-height: 1.6;
+  margin-bottom: 12px;
+  margin-left: 48px;
+  transition: color 0.2s ease, transform 0.2s ease;
   
   &:hover {
     color: #64ffda;
-    transform: translateX(5px);
+    transform: translateX(8px);
   }
 `;
 
 const SocialLinks = styled.div`
   display: flex;
-  gap: 1rem;
-  margin-top: 1rem;
+  gap: 16px;
+  margin-top: 24px;
+  margin-left: 48px;
 
   a {
     color: rgba(255, 255, 255, 0.8);
-    font-size: 1.5rem;
-    transition: all 0.3s ease;
-
+    font-size: 24px;
+    transition: all 0.2s ease;
+    padding: 8px;
+    margin: -8px;
+    line-height: 1;
+    
     &:hover {
       color: #64ffda;
-      transform: translateY(-3px);
+      transform: translateY(-4px);
     }
   }
 `;
 
 const Copyright = styled.div`
-  text-align: center;
-  margin: 3rem 0 0 0;
-  padding: 1.5rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 0.9rem;
-  background: rgba(0, 0, 0, 0.3);
   width: 100%;
+  text-align: center;
+  padding: 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.3);
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.6);
 
   span {
+    display: block;
+    margin-top: 8px;
     color: #64ffda;
+  }
+
+  svg {
+    vertical-align: middle;
+    margin: 0 4px;
+    color: #ff6b6b;
   }
 `;
 
 const FooterStats = styled.div`
   display: flex;
-  gap: 1rem;
-  margin-top: 1rem;
+  align-items: center;
+  gap: 8px;
+  margin-top: 24px;
   color: rgba(255, 255, 255, 0.8);
-  font-size: 0.9rem;
+  font-size: 14px;
 
   svg {
     color: #64ffda;
+    font-size: 16px;
   }
 `;
 
@@ -113,43 +142,27 @@ const Footer = () => {
           <FooterLink to="/faq">FAQ</FooterLink>
           <FooterLink to="/terms">Условия использования</FooterLink>
           <FooterLink to="/privacy">Политика конфиденциальности</FooterLink>
-          <FooterStats>
-            <FaRocket /> Запуск в 2025
-          </FooterStats>
         </FooterSection>
         <FooterSection>
           <h3>Поддержка</h3>
           <FooterLink to="/contact">Связаться с нами</FooterLink>
           <FooterLink to="/report">Сообщить о проблеме</FooterLink>
           <FooterLink to="/safety">Правила безопасности</FooterLink>
-          <FooterStats>
-            <FaShieldAlt /> Безопасность 24/7
-          </FooterStats>
         </FooterSection>
         <FooterSection>
           <h3>Сообщество</h3>
-          <ExternalLink href="https://blog.ruletka.com">Блог</ExternalLink>
-          <ExternalLink href="https://forum.ruletka.com">Форум</ExternalLink>
           <SocialLinks>
-            <ExternalLink href="https://github.com/ruletka">
-              <FaGithub />
+            <ExternalLink href="https://vk.com/ruletka" title="ВКонтакте">
+              <SlSocialVkontakte />
             </ExternalLink>
-            <ExternalLink href="https://twitter.com/ruletka">
-              <FaTwitter />
-            </ExternalLink>
-            <ExternalLink href="https://discord.gg/ruletka">
-              <FaDiscord />
-            </ExternalLink>
-            <ExternalLink href="https://t.me/ruletka">
+            <ExternalLink href="https://t.me/ruletka" title="Telegram">
               <FaTelegram />
             </ExternalLink>
           </SocialLinks>
         </FooterSection>
       </FooterContent>
       <Copyright>
-        © 2024-2025 Ruletka. Создано с <FaHeart style={{ color: '#ff6b6b' }} /> к Космосу.
-        <br />
-        <span>Готовимся к запуску в 2025 году</span>
+        © 2024-2025 Ruletka. Создано с <FaHeart /> к Космосу.
       </Copyright>
     </FooterContainer>
   );
