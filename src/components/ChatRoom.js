@@ -12,20 +12,51 @@ import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 import FaceFilters from './FaceFilters';
 import Face3DMasks from './Face3DMasks';
 import Mask3DPicker from './Mask3DPicker';
+import Footer from './Footer';
+import SpaceBackground from './SpaceBackground';
+import styled from 'styled-components';
 
-const socket = io(process.env.NODE_ENV === 'production' 
+// Socket configuration
+const SOCKET_URL = process.env.NODE_ENV === 'production' 
   ? 'https://ruletka.top' 
-  : 'http://localhost:5001', {
+  : 'http://localhost:5001';
+
+const socket = io(SOCKET_URL, {
+  path: '/socket.io',
   transports: ['websocket', 'polling'],
   reconnection: true,
-  reconnectionAttempts: 5,
+  reconnectionAttempts: 10,
   reconnectionDelay: 1000,
   reconnectionDelayMax: 5000,
   timeout: 20000,
-  withCredentials: true
+  withCredentials: true,
+  autoConnect: true,
+  forceNew: true,
+  secure: process.env.NODE_ENV === 'production'
 });
 
-const ChatRoom = () => {
+// Add connection status logging
+socket.on('connect', () => {
+  console.log('Connected to server:', SOCKET_URL);
+  console.log('Socket ID:', socket.id);
+});
+
+socket.on('connect_error', (error) => {
+  console.error('Connection error:', error);
+});
+
+const ChatContainer = styled.div`
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+`;
+
+const ChatContent = styled.div`
+  flex: 1;
+  padding: 20px;
+`;
+
+const ChatRoom = ({ currentTheme }) => {
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isConnected, setIsConnected] = useState(false);
@@ -770,233 +801,198 @@ const ChatRoom = () => {
   };
 
   return (
-    <>
-      <div className={`chat-container ${isConnected || isSearching ? 'chat-active' : ''}`}>
-        {showPermissionDialog && (
-          <div className="permission-message">
-            <h3>Разрешите доступ к камере и микрофону</h3>
-            <p>
-              Для использования видеочата необходим доступ к вашей камере и микрофону.
-              Пожалуйста, нажмите "Разрешить" в диалоговом окне браузера.
-            </p>
-            <div className="permission-buttons">
-              <button 
-                className="permission-button"
-                onClick={requestMediaPermission}
-              >
-                Разрешить доступ
-              </button>
-              <button 
-                className="permission-button secondary"
-                onClick={() => window.location.reload()}
-              >
-                Перезагрузить страницу
-              </button>
-            </div>
-            {connectionError && (
-              <div className="permission-error">
-                <p className="permission-denied">{connectionError}</p>
-                <p className="permission-help">
-                  Чтобы разрешить доступ:
-                  <br />
-                  1. Нажмите на значок 🔒 слева от адресной строки
-                  <br />
-                  2. Найдите настройки камеры и микрофона
-                  <br />
-                  3. Выберите "Разрешить"
-                </p>
+    <ChatContainer>
+      <SpaceBackground theme={currentTheme} />
+      <ChatContent>
+        <div className={`chat-container ${isConnected || isSearching ? 'chat-active' : ''}`}>
+          {showPermissionDialog && (
+            <div className="permission-message">
+              <h3>Разрешите доступ к камере и микрофону</h3>
+              <p>
+                Для использования видеочата необходим доступ к вашей камере и микрофону.
+                Пожалуйста, нажмите "Разрешить" в диалоговом окне браузера.
+              </p>
+              <div className="permission-buttons">
+                <button 
+                  className="permission-button"
+                  onClick={requestMediaPermission}
+                >
+                  Разрешить доступ
+                </button>
+                <button 
+                  className="permission-button secondary"
+                  onClick={() => window.location.reload()}
+                >
+                  Перезагрузить страницу
+                </button>
               </div>
+              {connectionError && (
+                <div className="permission-error">
+                  <p className="permission-denied">{connectionError}</p>
+                  <p className="permission-help">
+                    Чтобы разрешить доступ:
+                    <br />
+                    1. Нажмите на значок 🔒 слева от адресной строки
+                    <br />
+                    2. Найдите настройки камеры и микрофона
+                    <br />
+                    3. Выберите "Разрешить"
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+          
+          {isSearchingAnimation && (
+            <div className="searching-animation">
+              <div className="connecting-lines">
+                <div className="connecting-line"></div>
+                <div className="connecting-line"></div>
+                <div className="connecting-line"></div>
+              </div>
+              <div className="roulette-wheel"></div>
+              <div className="searching-text">Ищем собеседника...</div>
+            </div>
+          )}
+          
+          {isNextTransition && (
+            <div className="next-transition">
+              <div className="searching-text">Переключаем...</div>
+            </div>
+          )}
+          
+          <div className="video-grid">
+            {renderLocalVideo()}
+            {renderPartnerVideo()}
+          </div>
+
+          {showMaskPicker && (
+            <Mask3DPicker
+              activeMask={activeMask}
+              onMaskChange={handleMaskChange}
+            />
+          )}
+
+          <div className="control-buttons">
+            {!isConnected && !isSearching && (
+              <>
+                {!mediaPermission ? (
+                  <button 
+                    onClick={requestMediaPermission} 
+                    className="btn-start"
+                  >
+                    Разрешить доступ к камере
+                  </button>
+                ) : (
+                  <button 
+                    onClick={startSearch} 
+                    className="btn-start"
+                    disabled={!localStream || isSearching || isConnected}
+                  >
+                    {!localStream ? 'Ожидание камеры...' : 'Рулетим'}
+                  </button>
+                )}
+              </>
+            )}
+            {isConnected && (
+              <>
+                <button onClick={nextPartner} className="btn-next">
+                  Следующий
+                </button>
+                <button onClick={endChat} className="btn-end">
+                  Завершить
+                </button>
+              </>
             )}
           </div>
-        )}
-        
-        {isSearchingAnimation && (
-          <div className="searching-animation">
-            <div className="connecting-lines">
-              <div className="connecting-line"></div>
-              <div className="connecting-line"></div>
-              <div className="connecting-line"></div>
+
+          <form onSubmit={sendMessage} className="message-form">
+            <div className="messages-container">
+              {messages.map((message) => (
+                <div
+                  key={message.id}
+                  className={`message ${message.sender === 'you' ? 'message-sent' : 'message-received'}`}
+                >
+                  {message.type === 'text' ? (
+                    <>
+                      {message.text}
+                      {message.translated && (
+                        <div className="message-translation">{message.translated}</div>
+                      )}
+                    </>
+                  ) : message.type === 'image' ? (
+                    <img src={message.content} alt="shared" className="shared-image" />
+                  ) : null}
+                </div>
+              ))}
+              <div ref={messagesEndRef} />
             </div>
-            <div className="roulette-wheel"></div>
-            <div className="searching-text">Ищем собеседника...</div>
-          </div>
-        )}
-        
-        {isNextTransition && (
-          <div className="next-transition">
-            <div className="searching-text">Переключаем...</div>
-          </div>
-        )}
-        
-        <div className="video-grid">
-          {renderLocalVideo()}
-          {renderPartnerVideo()}
-        </div>
 
-        {showMaskPicker && (
-          <Mask3DPicker
-            activeMask={activeMask}
-            onMaskChange={handleMaskChange}
-          />
-        )}
-
-        <div className="control-buttons">
-          {!isConnected && !isSearching && (
-            <>
-              {!mediaPermission ? (
-                <button 
-                  onClick={requestMediaPermission} 
-                  className="btn-start"
-                >
-                  Разрешить доступ к камере
-                </button>
-              ) : (
-                <button 
-                  onClick={startSearch} 
-                  className="btn-start"
-                  disabled={!localStream || isSearching || isConnected}
-                >
-                  {!localStream ? 'Ожидание камеры...' : 'Рулетим'}
-                </button>
-              )}
-            </>
-          )}
-          {isConnected && (
-            <>
-              <button onClick={nextPartner} className="btn-next">
-                Следующий
-              </button>
-              <button onClick={endChat} className="btn-end">
-                Завершить
-              </button>
-            </>
-          )}
-        </div>
-
-        <form onSubmit={sendMessage} className="message-form">
-          <div className="messages-container">
-            {messages.map((message) => (
-              <div
-                key={message.id}
-                className={`message ${message.sender === 'you' ? 'message-sent' : 'message-received'}`}
+            <div className="input-wrapper">
+              <button 
+                type="button" 
+                className="emoji-button"
+                onClick={() => setShowEmoji(!showEmoji)}
               >
-                {message.type === 'text' ? (
-                  <>
-                    {message.text}
-                    {message.translated && (
-                      <div className="message-translation">{message.translated}</div>
-                    )}
-                  </>
-                ) : message.type === 'image' ? (
-                  <img src={message.content} alt="shared" className="shared-image" />
-                ) : null}
+                <FaSmile size={24} />
+              </button>
+              <button
+                type="button"
+                className="image-upload-button"
+                onClick={() => fileInputRef.current.click()}
+              >
+                <IoMdImage size={24} />
+              </button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                style={{ display: 'none' }}
+              />
+              <input
+                type="text"
+                value={inputMessage}
+                onChange={(e) => setInputMessage(e.target.value)}
+                placeholder="Написать сообщение..."
+                disabled={!isConnected}
+                className="message-input"
+              />
+              <button
+                type="button"
+                className={`translate-button ${autoTranslate ? 'active' : ''}`}
+                onClick={() => {
+                  setAutoTranslate(!autoTranslate);
+                  setTargetLanguage(targetLanguage === 'en' ? 'ru' : 'en');
+                }}
+              >
+                <MdTranslate size={24} />
+                <span className="translate-lang">{targetLanguage.toUpperCase()}</span>
+              </button>
+              <button type="submit" disabled={!isConnected} className="btn-send">
+                <IoMdSend size={24} />
+              </button>
+            </div>
+            
+            {showEmoji && (
+              <div className="emoji-picker-container">
+                <EmojiPicker onEmojiClick={onEmojiClick} />
               </div>
-            ))}
-            <div ref={messagesEndRef} />
-          </div>
+            )}
+          </form>
 
-          <div className="input-wrapper">
-            <button 
-              type="button" 
-              className="emoji-button"
-              onClick={() => setShowEmoji(!showEmoji)}
-            >
-              <FaSmile size={24} />
-            </button>
-            <button
-              type="button"
-              className="image-upload-button"
-              onClick={() => fileInputRef.current.click()}
-            >
-              <IoMdImage size={24} />
-            </button>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              onChange={handleImageUpload}
-              style={{ display: 'none' }}
-            />
-            <input
-              type="text"
-              value={inputMessage}
-              onChange={(e) => setInputMessage(e.target.value)}
-              placeholder="Написать сообщение..."
-              disabled={!isConnected}
-              className="message-input"
-            />
-            <button
-              type="button"
-              className={`translate-button ${autoTranslate ? 'active' : ''}`}
-              onClick={() => {
-                setAutoTranslate(!autoTranslate);
-                setTargetLanguage(targetLanguage === 'en' ? 'ru' : 'en');
-              }}
-            >
-              <MdTranslate size={24} />
-              <span className="translate-lang">{targetLanguage.toUpperCase()}</span>
-            </button>
-            <button type="submit" disabled={!isConnected} className="btn-send">
-              <IoMdSend size={24} />
-            </button>
-          </div>
-          
-          {showEmoji && (
-            <div className="emoji-picker-container">
-              <EmojiPicker onEmojiClick={onEmojiClick} />
+          {partnerJoined && (
+            <div className="chat-timer">
+              {formatTime(chatDuration)}
             </div>
           )}
-        </form>
-
-        {partnerJoined && (
-          <div className="chat-timer">
-            {formatTime(chatDuration)}
-          </div>
+        </div>
+        
+        {!isConnected && !isSearching && (
+          <Footer />
         )}
-      </div>
-      
-      {!isConnected && !isSearching && (
-        <footer className="footer">
-          <div className="footer-content">
-            <div className="footer-section">
-              <h3>О нас</h3>
-              <div className="footer-links">
-                <a href="/about" className="footer-link">О проекте</a>
-                <a href="/features" className="footer-link">Возможности</a>
-                <a href="/support" className="footer-link">Поддержка</a>
-              </div>
-            </div>
-            <div className="footer-section">
-              <h3>Навигация</h3>
-              <div className="footer-links">
-                <a href="/" className="footer-link">Главная</a>
-                <a href="/chat" className="footer-link">Начать чат</a>
-                <a href="/faq" className="footer-link">FAQ</a>
-              </div>
-            </div>
-            <div className="footer-section">
-              <h3>Правовая информация</h3>
-              <div className="footer-links">
-                <a href="/terms" className="footer-link">Условия использования</a>
-                <a href="/privacy" className="footer-link">Политика конфиденциальности</a>
-                <a href="/cookies" className="footer-link">Политика cookies</a>
-              </div>
-            </div>
-            <div className="footer-section">
-              <h3>Поддержка</h3>
-              <div className="footer-links">
-                <a href="/contact" className="footer-link">Связаться с нами</a>
-                <a href="/report" className="footer-link">Сообщить о нарушении</a>
-                <a href="/safety" className="footer-link">Правила безопасности</a>
-              </div>
-            </div>
-          </div>
-          <div className="footer-bottom">
-            © 2024 Alien Ruletka. Все права защищены.
-          </div>
-        </footer>
-      )}
-    </>
+      </ChatContent>
+    </ChatContainer>
   );
 };
 
