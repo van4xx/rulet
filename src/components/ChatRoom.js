@@ -405,6 +405,40 @@ const ChatRoom = ({ currentTheme }) => {
     };
   }, [peer]);
 
+  const handleConnectionError = useCallback(() => {
+    if (peer) {
+      peer.destroy();
+      setPeer(null);
+    }
+    setConnectionStatus('failed');
+    setTimeout(() => {
+      if (connectionStatus === 'failed') {
+        startSearch();
+      }
+    }, 3000);
+  }, [peer, connectionStatus, startSearch]);
+
+  const handlePeerDisconnect = useCallback(() => {
+    if (remoteVideoRef.current) {
+      remoteVideoRef.current.srcObject = null;
+    }
+    setConnectionStatus('idle');
+    setIsConnected(false);
+  }, []);
+
+  const handleIceDisconnect = useCallback(() => {
+    console.log('ICE connection failed/disconnected');
+    if (peer && peer._pc) {
+      try {
+        peer._pc.restartIce();
+        console.log('ICE restart initiated');
+      } catch (err) {
+        console.error('ICE restart failed:', err);
+        handleConnectionError();
+      }
+    }
+  }, [peer, handleConnectionError]);
+
   const createPeerConnection = useCallback((initiator, stream) => {
     try {
       const newPeer = new Peer({
@@ -430,15 +464,12 @@ const ChatRoom = ({ currentTheme }) => {
           rtcpMuxPolicy: 'require'
         },
         sdpTransform: (sdp) => {
-          // Улучшаем качество аудио
           sdp = sdp.replace('useinbandfec=1', 'useinbandfec=1; stereo=1; maxaveragebitrate=510000');
-          // Устанавливаем приоритет для видео
           sdp = sdp.replace('a=group:BUNDLE 0 1', 'a=group:BUNDLE 1 0');
           return sdp;
         }
       });
 
-      // Добавляем обработчики состояния соединения
       newPeer.on('connect', () => {
         console.log('Peer connection established');
         setConnectionStatus('connected');
@@ -468,43 +499,7 @@ const ChatRoom = ({ currentTheme }) => {
       setConnectionError('Ошибка создания соединения');
       return null;
     }
-  }, []);
-
-  const handleConnectionError = () => {
-    if (peer) {
-      peer.destroy();
-      setPeer(null);
-    }
-    setConnectionStatus('failed');
-    // Автоматически пытаемся найти нового собеседника
-    setTimeout(() => {
-      if (connectionStatus === 'failed') {
-        startSearch();
-      }
-    }, 3000);
-  };
-
-  const handlePeerDisconnect = () => {
-    if (remoteVideoRef.current) {
-      remoteVideoRef.current.srcObject = null;
-    }
-    setConnectionStatus('idle');
-    setIsConnected(false);
-  };
-
-  const handleIceDisconnect = () => {
-    console.log('ICE connection failed/disconnected');
-    // Пытаемся переподключиться через ICE restart
-    if (peer && peer._pc) {
-      try {
-        peer._pc.restartIce();
-        console.log('ICE restart initiated');
-      } catch (err) {
-        console.error('ICE restart failed:', err);
-        handleConnectionError();
-      }
-    }
-  };
+  }, [handleConnectionError, handlePeerDisconnect, handleIceDisconnect]);
 
   useEffect(() => {
     socket.on('message', (data) => {
@@ -703,7 +698,7 @@ const ChatRoom = ({ currentTheme }) => {
     };
   }, [localStream, connectionStatus]);
 
-  const startSearch = () => {
+  const startSearch = useCallback(() => {
     if (!localStream) {
       setConnectionError('Нет доступа к камере');
       return;
@@ -714,7 +709,6 @@ const ChatRoom = ({ currentTheme }) => {
       socket.connect();
     }
 
-    // Очищаем предыдущее состояние
     setConnectionStatus('searching');
     setConnectionError(null);
     setIsSearchingAnimation(true);
@@ -731,14 +725,13 @@ const ChatRoom = ({ currentTheme }) => {
       remoteVideoRef.current.srcObject = null;
     }
 
-    // Начинаем поиск с небольшой задержкой для анимации
     setTimeout(() => {
       console.log('Emitting startSearch');
       socket.emit('startSearch');
       setIsSearching(true);
       setIsSearchingAnimation(false);
     }, 1000);
-  };
+  }, [localStream, peer]);
 
   const nextPartner = () => {
     setIsNextTransition(true);
