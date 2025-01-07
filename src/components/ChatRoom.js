@@ -51,20 +51,6 @@ socket.on('connect_error', (error) => {
   });
 });
 
-// Attempt to connect when component mounts
-useEffect(() => {
-  if (!socket.connected) {
-    console.log('Attempting to connect to server...');
-    socket.connect();
-  }
-
-  return () => {
-    if (socket.connected) {
-      socket.disconnect();
-    }
-  };
-}, []);
-
 const ChatContainer = styled.div`
   min-height: 100vh;
   display: flex;
@@ -367,6 +353,20 @@ const ChatRoom = ({ currentTheme }) => {
       peer: !!peer
     });
   }, [isConnected, isSearching, connectionStatus, localStream, peer]);
+
+  // Attempt to connect when component mounts
+  useEffect(() => {
+    if (!socket.connected) {
+      console.log('Attempting to connect to server...');
+      socket.connect();
+    }
+
+    return () => {
+      if (socket.connected) {
+        socket.disconnect();
+      }
+    };
+  }, []);
 
   // Основной useEffect для обработки событий сокета
   useEffect(() => {
