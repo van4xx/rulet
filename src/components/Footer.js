@@ -147,7 +147,7 @@ const Footer = () => {
         </FooterSection>
       </FooterContent>
       <Copyright>
-        © 2023-2025 Ruletka. Создано с <FaHeart style={{ color: '#ff6b6b' }} /> к космосу.
+        © 2024-2025 Ruletka. Создано с <FaHeart style={{ color: '#ff6b6b' }} /> к Космосу.
         <br />
         <span>Готовимся к запуску в 2025 году</span>
       </Copyright>
