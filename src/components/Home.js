@@ -30,7 +30,7 @@ const Home = ({ theme = 'morning' }) => {
           </div>
           
           <h1>
-            <span className="gradient-text">Alien</span> Ruletka
+            <span className="gradient-text"></span> Ruletka
           </h1>
           
           <p className="hero-description">

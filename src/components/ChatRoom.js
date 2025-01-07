@@ -21,10 +21,11 @@ const socket = io(SOCKET_SERVER, {
   transports: ['websocket', 'polling'],
   upgrade: true,
   reconnection: true,
-  reconnectionAttempts: 5,
+  reconnectionAttempts: 10,
   reconnectionDelay: 1000,
-  timeout: 60000,
-  withCredentials: true
+  reconnectionDelayMax: 5000,
+  timeout: 20000,
+  autoConnect: false
 });
 
 const ChatRoom = () => {
@@ -327,18 +328,25 @@ const ChatRoom = () => {
   }, [isConnected, isSearching, connectionStatus, localStream, peer]);
 
   useEffect(() => {
-    socket.on('connect_error', (error) => {
-      console.error('Socket connection error:', error);
-      setConnectionError('Ошибка подключения к серверу');
-    });
+    // Подключаемся к серверу при монтировании компонента
+    socket.connect();
 
     socket.on('connect', () => {
       console.log('Socket connected:', socket.id);
+      setConnectionError(null);
+    });
+
+    socket.on('connect_error', (error) => {
+      console.error('Socket connection error:', error);
+      setConnectionError('Ошибка подключения к серверу. Пожалуйста, проверьте соединение с интернетом.');
+      setConnectionStatus('failed');
     });
 
     socket.on('disconnect', () => {
       console.log('Socket disconnected');
       setIsConnected(false);
+      setConnectionStatus('failed');
+      setConnectionError('Соединение с сервером потеряно. Пытаемся переподключиться...');
       if (peer) {
         peer.destroy();
         setPeer(null);
@@ -346,11 +354,12 @@ const ChatRoom = () => {
     });
 
     return () => {
-      socket.off('connect_error');
       socket.off('connect');
+      socket.off('connect_error');
       socket.off('disconnect');
+      socket.disconnect();
     };
-  }, [peer]);
+  }, []);
 
   const createPeerConnection = useCallback((initiator, stream) => {
     try {
@@ -528,6 +537,13 @@ const ChatRoom = () => {
       return;
     }
 
+    if (!socket.connected) {
+      console.log('Socket not connected, reconnecting...');
+      socket.connect();
+      setConnectionError('Переподключение к серверу...');
+      return;
+    }
+
     setConnectionStatus('searching');
     setConnectionError(null);
     setIsSearchingAnimation(true);
@@ -542,6 +558,7 @@ const ChatRoom = () => {
       remoteVideoRef.current.srcObject = null;
     }
 
+    console.log('Emitting startSearch');
     socket.emit('startSearch');
     
     setTimeout(() => {
@@ -595,7 +612,7 @@ const ChatRoom = () => {
         </span>
         {connectionStatus === 'idle' ? (
           <div className="video-placeholder">
-            <span>Нажмите "Рулетим" чтобы начать</span>
+            <span>Нажмите "РУЛЕТИМ" чтобы начать</span>
           </div>
         ) : connectionStatus === 'waiting' ? (
           <div className="video-placeholder">
