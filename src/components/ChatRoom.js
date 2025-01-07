@@ -394,26 +394,40 @@ const ChatRoom = ({ currentTheme }) => {
             }
           ],
           iceTransportPolicy: 'all',
-          iceCandidatePoolSize: 10
+          iceCandidatePoolSize: 10,
+          bundlePolicy: 'max-bundle',
+          rtcpMuxPolicy: 'require'
         },
         sdpTransform: (sdp) => {
-          return sdp.replace('useinbandfec=1', 'useinbandfec=1; stereo=1; maxaveragebitrate=510000');
+          // Улучшаем качество аудио
+          sdp = sdp.replace('useinbandfec=1', 'useinbandfec=1; stereo=1; maxaveragebitrate=510000');
+          // Устанавливаем приоритет для видео
+          sdp = sdp.replace('a=group:BUNDLE 0 1', 'a=group:BUNDLE 1 0');
+          return sdp;
         }
+      });
+
+      // Добавляем обработчики состояния соединения
+      newPeer.on('connect', () => {
+        console.log('Peer connection established');
+        setConnectionStatus('connected');
       });
 
       newPeer.on('error', (err) => {
         console.error('Peer connection error:', err);
         setConnectionError('Ошибка подключения к собеседнику');
-        if (peer) {
-          peer.destroy();
-          setPeer(null);
-        }
+        handleConnectionError();
       });
 
       newPeer.on('close', () => {
         console.log('Peer connection closed');
-        if (remoteVideoRef.current) {
-          remoteVideoRef.current.srcObject = null;
+        handlePeerDisconnect();
+      });
+
+      newPeer.on('iceStateChange', (state) => {
+        console.log('ICE state:', state);
+        if (state === 'disconnected' || state === 'failed') {
+          handleIceDisconnect();
         }
       });
 
@@ -423,7 +437,43 @@ const ChatRoom = ({ currentTheme }) => {
       setConnectionError('Ошибка создания соединения');
       return null;
     }
-  }, [peer]);
+  }, []);
+
+  const handleConnectionError = () => {
+    if (peer) {
+      peer.destroy();
+      setPeer(null);
+    }
+    setConnectionStatus('failed');
+    // Автоматически пытаемся найти нового собеседника
+    setTimeout(() => {
+      if (connectionStatus === 'failed') {
+        startSearch();
+      }
+    }, 3000);
+  };
+
+  const handlePeerDisconnect = () => {
+    if (remoteVideoRef.current) {
+      remoteVideoRef.current.srcObject = null;
+    }
+    setConnectionStatus('idle');
+    setIsConnected(false);
+  };
+
+  const handleIceDisconnect = () => {
+    console.log('ICE connection failed/disconnected');
+    // Пытаемся переподключиться через ICE restart
+    if (peer && peer._pc) {
+      try {
+        peer._pc.restartIce();
+        console.log('ICE restart initiated');
+      } catch (err) {
+        console.error('ICE restart failed:', err);
+        handleConnectionError();
+      }
+    }
+  };
 
   useEffect(() => {
     socket.on('message', (data) => {

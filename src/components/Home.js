@@ -287,7 +287,7 @@ const Home = ({ currentTheme, onlineUsers }) => {
           <InfoTitle>Почему выбирают Alien Ruletka?</InfoTitle>
           <InfoGrid>
             <InfoCard>
-              <FaUserAstronaut />
+            <FaUserAstronaut />
               <InfoCardTitle>Анонимность</InfoCardTitle>
               <InfoCardText>
                 Общайтесь свободно и безопасно. Мы не храним историю чатов и не требуем регистрации.
