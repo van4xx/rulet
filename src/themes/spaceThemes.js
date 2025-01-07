@@ -38,7 +38,7 @@ const spaceThemes = {
       count: 5,
       emoji: '🛸',
       size: 30,
-      speed: { min: 0.8, max: 1.5 }
+      speed: { min: 0.15, max: 0.3 }
     },
     nebulas: [
       {
@@ -116,7 +116,7 @@ const spaceThemes = {
       count: 5,
       emoji: '🛸',
       size: 35,
-      speed: { min: 0.8, max: 1.5 }
+      speed: { min: 0.15, max: 0.3 }
     }
   }
 };
