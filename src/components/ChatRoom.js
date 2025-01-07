@@ -13,20 +13,11 @@ import FaceFilters from './FaceFilters';
 import Face3DMasks from './Face3DMasks';
 import Mask3DPicker from './Mask3DPicker';
 
-const SOCKET_SERVER = 'https://ruletka.top:5002';
-
-const socket = io(SOCKET_SERVER, {
-  transports: ['websocket', 'polling'],
-  upgrade: true,
+const socket = io('http://localhost:5002', {
+  transports: ['websocket'],
+  upgrade: false,
   reconnection: true,
-  reconnectionAttempts: 10,
-  reconnectionDelay: 1000,
-  reconnectionDelayMax: 5000,
-  timeout: 20000,
-  autoConnect: false,
-  path: '/socket.io',
-  secure: true,
-  rejectUnauthorized: false
+  reconnectionAttempts: 5
 });
 
 const ChatRoom = () => {
@@ -329,25 +320,18 @@ const ChatRoom = () => {
   }, [isConnected, isSearching, connectionStatus, localStream, peer]);
 
   useEffect(() => {
-    // Подключаемся к серверу при монтировании компонента
-    socket.connect();
+    socket.on('connect_error', (error) => {
+      console.error('Socket connection error:', error);
+      setConnectionError('Ошибка подключения к серверу');
+    });
 
     socket.on('connect', () => {
       console.log('Socket connected:', socket.id);
-      setConnectionError(null);
-    });
-
-    socket.on('connect_error', (error) => {
-      console.error('Socket connection error:', error);
-      setConnectionError('Ошибка подключения к серверу. Пожалуйста, проверьте соединение с интернетом.');
-      setConnectionStatus('failed');
     });
 
     socket.on('disconnect', () => {
       console.log('Socket disconnected');
       setIsConnected(false);
-      setConnectionStatus('failed');
-      setConnectionError('Соединение с сервером потеряно. Пытаемся переподключиться...');
       if (peer) {
         peer.destroy();
         setPeer(null);
@@ -355,12 +339,11 @@ const ChatRoom = () => {
     });
 
     return () => {
-      socket.off('connect');
       socket.off('connect_error');
+      socket.off('connect');
       socket.off('disconnect');
-      socket.disconnect();
     };
-  }, []);
+  }, [peer]);
 
   const createPeerConnection = useCallback((initiator, stream) => {
     try {
@@ -427,6 +410,38 @@ const ChatRoom = () => {
     }
   }, [peer]);
 
+  const startSearch = () => {
+    if (!localStream) {
+      setConnectionError('Нет доступа к камере');
+      return;
+    }
+
+    // Сбрасываем все состояния
+    setConnectionStatus('searching');
+    setConnectionError(null);
+    setIsSearchingAnimation(true);
+    setMessages([]);
+    setIsConnected(false);
+    setPartnerJoined(false);
+
+    // Очищаем предыдущее соединение
+    if (peer) {
+      peer.destroy();
+      setPeer(null);
+    }
+
+    if (remoteVideoRef.current) {
+      remoteVideoRef.current.srcObject = null;
+    }
+
+    // Начинаем поиск
+    socket.emit('startSearch');
+    
+    setTimeout(() => {
+      setIsSearchingAnimation(false);
+    }, 1000);
+  };
+
   useEffect(() => {
     socket.on('chatStarted', async ({ roomId: newRoomId, isInitiator }) => {
       console.log('Chat started in room:', newRoomId, 'isInitiator:', isInitiator);
@@ -450,6 +465,25 @@ const ChatRoom = () => {
           console.error('Error creating peer:', err);
           setConnectionError('Ошибка создания соединения');
         }
+      }
+    });
+
+    socket.on('waiting', () => {
+      console.log('Waiting for partner');
+      setConnectionStatus('waiting');
+      setIsSearching(true);
+      setIsConnected(false);
+    });
+
+    socket.on('searchingNewPartner', () => {
+      console.log('Searching for new partner');
+      setConnectionStatus('searching');
+      setIsSearching(true);
+      setIsConnected(false);
+      setPartnerJoined(false);
+      if (peer) {
+        peer.destroy();
+        setPeer(null);
       }
     });
 
@@ -485,22 +519,6 @@ const ChatRoom = () => {
       }
     });
 
-    socket.on('waiting', () => {
-      console.log('Waiting for partner');
-      setConnectionStatus('waiting');
-    });
-
-    socket.on('searchingNewPartner', () => {
-      console.log('Searching for new partner');
-      setConnectionStatus('searching');
-      setIsSearching(true);
-      setPartnerJoined(false);
-      if (peer) {
-        peer.destroy();
-        setPeer(null);
-      }
-    });
-
     socket.on('partnerLeft', () => {
       console.log('Partner left');
       setIsConnected(false);
@@ -531,42 +549,6 @@ const ChatRoom = () => {
       }
     };
   }, [localStream, peer, chatTimerInterval, createPeerConnection]);
-
-  const startSearch = () => {
-    if (!localStream) {
-      setConnectionError('Нет доступа к камере');
-      return;
-    }
-
-    if (!socket.connected) {
-      console.log('Socket not connected, reconnecting...');
-      socket.connect();
-      setConnectionError('Переподключение к серверу...');
-      return;
-    }
-
-    setConnectionStatus('searching');
-    setConnectionError(null);
-    setIsSearchingAnimation(true);
-    setMessages([]);
-
-    if (peer) {
-      peer.destroy();
-      setPeer(null);
-    }
-
-    if (remoteVideoRef.current) {
-      remoteVideoRef.current.srcObject = null;
-    }
-
-    console.log('Emitting startSearch');
-    socket.emit('startSearch');
-    
-    setTimeout(() => {
-      setIsSearching(true);
-      setIsSearchingAnimation(false);
-    }, 2000);
-  };
 
   const nextPartner = () => {
     setIsNextTransition(true);
@@ -613,7 +595,7 @@ const ChatRoom = () => {
         </span>
         {connectionStatus === 'idle' ? (
           <div className="video-placeholder">
-            <span>Нажмите "РУЛЕТИМ" чтобы начать</span>
+            <span>Нажмите "Рулетим" чтобы начать</span>
           </div>
         ) : connectionStatus === 'waiting' ? (
           <div className="video-placeholder">
