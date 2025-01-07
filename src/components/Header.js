@@ -232,7 +232,7 @@ const Header = ({ currentTheme, onThemeChange, onlineUsers }) => {
     <HeaderContainer>
       <Logo to="/">
         <FaStar />
-        <span>Alien Ruletka</span>
+        <span>Ruletka</span>
       </Logo>
 
       <Navigation>

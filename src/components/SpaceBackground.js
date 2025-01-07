@@ -29,12 +29,22 @@ const Star = styled.div`
   height: ${props => props.size}px;
   background: ${props => props.color};
   border-radius: 50%;
-  animation: twinkle ${props => props.twinkleSpeed}s ease-in-out infinite alternate;
-  box-shadow: 0 0 ${props => props.size}px ${props => props.color};
+  animation: twinkle ${props => props.twinkleSpeed}s ease-in-out infinite alternate,
+             glow ${props => props.twinkleSpeed * 1.5}s ease-in-out infinite alternate;
+  box-shadow: 0 0 ${props => props.size * 2}px ${props => props.color},
+              0 0 ${props => props.size * 4}px ${props => props.color},
+              0 0 ${props => props.size * 6}px ${props => props.color};
 
   @keyframes twinkle {
-    0% { opacity: 0.3; }
-    100% { opacity: 1; }
+    0% { opacity: 0.3; transform: scale(0.8); }
+    50% { opacity: 0.8; transform: scale(1.1); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+
+  @keyframes glow {
+    0% { filter: brightness(0.8) blur(1px); }
+    50% { filter: brightness(1.2) blur(2px); }
+    100% { filter: brightness(1) blur(1px); }
   }
 `;
 
@@ -150,12 +160,9 @@ const Comet = styled.div`
 
 const UFO = styled.div`
   position: absolute;
-  width: ${props => props.size}px;
-  height: ${props => Math.floor(props.size * 0.4)}px;
-  background: ${props => props.color};
-  border-radius: 50% 50% 20% 20%;
-  box-shadow: 0 0 20px ${props => props.glowColor};
+  font-size: ${props => props.size}px;
   animation: ufoFloat ${props => 5 / props.speed}s ease-in-out infinite;
+  user-select: none;
 
   @keyframes ufoFloat {
     0% { transform: translate(0, 0); }
@@ -220,11 +227,29 @@ const SpaceBackground = ({ theme = 'night' }) => {
           height: `${star.size}px`,
           background: currentTheme.stars.color,
           borderRadius: '50%',
-          boxShadow: `0 0 ${star.size}px ${currentTheme.stars.color}`,
-          animation: `twinkle ${star.twinkleSpeed}s ease-in-out infinite alternate`
+          boxShadow: `0 0 ${star.size * 2}px ${currentTheme.stars.color},
+                      0 0 ${star.size * 4}px ${currentTheme.stars.color},
+                      0 0 ${star.size * 6}px ${currentTheme.stars.color}`,
+          animation: `twinkle ${star.twinkleSpeed}s ease-in-out infinite alternate,
+                     glow ${star.twinkleSpeed * 1.5}s ease-in-out infinite alternate`
         });
         canvasRef.current.appendChild(starElement);
       });
+
+      const style = document.createElement('style');
+      style.textContent = `
+        @keyframes twinkle {
+          0% { opacity: 0.3; transform: scale(0.8); }
+          50% { opacity: 0.8; transform: scale(1.1); }
+          100% { opacity: 1; transform: scale(1); }
+        }
+        @keyframes glow {
+          0% { filter: brightness(0.8) blur(1px); }
+          50% { filter: brightness(1.2) blur(2px); }
+          100% { filter: brightness(1) blur(1px); }
+        }
+      `;
+      document.head.appendChild(style);
     }
   }, [theme, currentTheme.stars]);
 
@@ -253,18 +278,25 @@ const SpaceBackground = ({ theme = 'night' }) => {
             tailLength={currentTheme.comets.tailLength}
             speed={Math.random() * (currentTheme.comets.speed.max - currentTheme.comets.speed.min) + currentTheme.comets.speed.min}
             delay={Math.random() * 10}
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`
+            }}
           />
         ))}
 
         {currentTheme.ufos && Array.from({ length: currentTheme.ufos.count }).map((_, i) => (
           <UFO
             key={i}
-            {...currentTheme.ufos}
+            size={currentTheme.ufos.size}
+            speed={Math.random() * (currentTheme.ufos.speed.max - currentTheme.ufos.speed.min) + currentTheme.ufos.speed.min}
             style={{
-              left: `${Math.random() * 80 + 10}%`,
-              top: `${Math.random() * 80 + 10}%`
+              left: `${Math.random() * 80}%`,
+              top: `${Math.random() * 80}%`
             }}
-          />
+          >
+            {currentTheme.ufos.emoji}
+          </UFO>
         ))}
 
         {currentTheme.aurora?.active && (

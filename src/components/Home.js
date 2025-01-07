@@ -249,7 +249,7 @@ const Home = ({ currentTheme, onlineUsers }) => {
     <Container>
       <SpaceBackground theme={currentTheme} />
       <Content>
-        <Title>Alien Ruletka</Title>
+        <Title>Ruletka</Title>
         <Subtitle>
           Исследуйте космические просторы общения в нашем уникальном видеочате. 
           Встречайте новых людей со всей галактики в захватывающем космическом приключении!
@@ -284,7 +284,7 @@ const Home = ({ currentTheme, onlineUsers }) => {
         </StartButton>
 
         <InfoSection>
-          <InfoTitle>Почему выбирают Alien Ruletka?</InfoTitle>
+          <InfoTitle>Почему выбирают Ruletka?</InfoTitle>
           <InfoGrid>
             <InfoCard>
             <FaUserAstronaut />

@@ -2,10 +2,10 @@ const spaceThemes = {
   day: {
     background: 'linear-gradient(to bottom, #0288d1, #29b6f6, #81d4fa, #b3e5fc)',
     stars: {
-      count: 300,
+      count: 100,
       color: '#ffd700',
-      size: { min: 1, max: 3 },
-      twinkleSpeed: { min: 0.5, max: 2 },
+      size: { min: 2, max: 4 },
+      twinkleSpeed: { min: 2, max: 4 },
     },
     planets: [
       {
@@ -59,9 +59,8 @@ const spaceThemes = {
     },
     ufos: {
       count: 4,
-      size: 45,
-      color: 'radial-gradient(circle at 50% 50%, #b388ff, #7c4dff)',
-      glowColor: 'rgba(124, 77, 255, 0.5)',
+      emoji: '🛸',
+      size: 30,
       speed: { min: 1, max: 3 }
     },
     nebulas: [
@@ -91,10 +90,10 @@ const spaceThemes = {
   night: {
     background: 'linear-gradient(to bottom, #000000, #1a237e, #311b92, #4a148c)',
     stars: {
-      count: 1000,
+      count: 300,
       color: '#ffffff',
-      size: { min: 1, max: 5 },
-      twinkleSpeed: { min: 0.3, max: 1.5 }
+      size: { min: 2, max: 5 },
+      twinkleSpeed: { min: 2, max: 5 },
     },
     planets: [
       {
@@ -176,9 +175,8 @@ const spaceThemes = {
     },
     ufos: {
       count: 6,
-      size: 50,
-      color: 'radial-gradient(circle at 50% 50%, #b388ff, #7c4dff, #6200ea)',
-      glowColor: 'rgba(124, 77, 255, 0.6)',
+      emoji: '🛸',
+      size: 35,
       speed: { min: 1, max: 3 }
     }
   }

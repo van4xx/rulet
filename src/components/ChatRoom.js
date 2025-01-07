@@ -19,7 +19,7 @@ import styled from 'styled-components';
 // Socket configuration
 const SOCKET_URL = process.env.NODE_ENV === 'production' 
   ? 'https://ruletka.top' 
-  : 'http://localhost:5001';
+  : 'http://localhost:5002';
 
 const socket = io(SOCKET_URL, {
   path: '/socket.io',
@@ -32,8 +32,7 @@ const socket = io(SOCKET_URL, {
   withCredentials: true,
   autoConnect: true,
   forceNew: true,
-  secure: true,
-  rejectUnauthorized: false
+  secure: process.env.NODE_ENV === 'production'
 });
 
 // Улучшенная обработка состояния соединения

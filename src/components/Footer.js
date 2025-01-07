@@ -128,26 +128,26 @@ const Footer = () => {
         </FooterSection>
         <FooterSection>
           <h3>Сообщество</h3>
-          <ExternalLink href="https://blog.alienruletka.com">Блог</ExternalLink>
-          <ExternalLink href="https://forum.alienruletka.com">Форум</ExternalLink>
+          <ExternalLink href="https://blog.ruletka.com">Блог</ExternalLink>
+          <ExternalLink href="https://forum.ruletka.com">Форум</ExternalLink>
           <SocialLinks>
-            <ExternalLink href="https://github.com/alienruletka">
+            <ExternalLink href="https://github.com/ruletka">
               <FaGithub />
             </ExternalLink>
-            <ExternalLink href="https://twitter.com/alienruletka">
+            <ExternalLink href="https://twitter.com/ruletka">
               <FaTwitter />
             </ExternalLink>
-            <ExternalLink href="https://discord.gg/alienruletka">
+            <ExternalLink href="https://discord.gg/ruletka">
               <FaDiscord />
             </ExternalLink>
-            <ExternalLink href="https://t.me/alienruletka">
+            <ExternalLink href="https://t.me/ruletka">
               <FaTelegram />
             </ExternalLink>
           </SocialLinks>
         </FooterSection>
       </FooterContent>
       <Copyright>
-        © 2023-2025 Alien Ruletka. Создано с <FaHeart style={{ color: '#ff6b6b' }} /> к космосу. 
+        © 2023-2025 Ruletka. Создано с <FaHeart style={{ color: '#ff6b6b' }} /> к космосу.
         <br />
         <span>Готовимся к запуску в 2025 году</span>
       </Copyright>
