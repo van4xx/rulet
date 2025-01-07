@@ -30,7 +30,7 @@ const socket = io(SOCKET_URL, {
   reconnectionDelayMax: 5000,
   timeout: 20000,
   withCredentials: true,
-  autoConnect: true,
+  autoConnect: false,
   forceNew: true,
   secure: process.env.NODE_ENV === 'production'
 });
@@ -39,11 +39,31 @@ const socket = io(SOCKET_URL, {
 socket.on('connect', () => {
   console.log('Connected to server:', SOCKET_URL);
   console.log('Socket ID:', socket.id);
+  console.log('Transport:', socket.io.engine.transport.name);
 });
 
 socket.on('connect_error', (error) => {
   console.error('Connection error:', error);
+  console.log('Connection options:', {
+    url: SOCKET_URL,
+    path: '/socket.io',
+    transports: socket.io.engine.opts.transports
+  });
 });
+
+// Attempt to connect when component mounts
+useEffect(() => {
+  if (!socket.connected) {
+    console.log('Attempting to connect to server...');
+    socket.connect();
+  }
+
+  return () => {
+    if (socket.connected) {
+      socket.disconnect();
+    }
+  };
+}, []);
 
 const ChatContainer = styled.div`
   min-height: 100vh;
