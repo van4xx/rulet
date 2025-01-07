@@ -15,7 +15,7 @@ const Content = styled.div`
   padding: 2rem;
   background: ${({ theme }) => 
     theme === 'day' 
-      ? 'rgba(255, 255, 255, 0.9)' 
+      ? 'rgba(255, 255, 255, 0.95)' 
       : 'rgba(0, 0, 0, 0.8)'};
   border-radius: 20px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -28,10 +28,10 @@ const Title = styled.h1`
   text-align: center;
   margin-bottom: 2rem;
   color: ${({ theme }) => 
-    theme === 'day' ? '#1a237e' : '#fff'};
+    theme === 'day' ? '#000' : '#fff'};
   text-shadow: ${({ theme }) =>
     theme === 'day'
-      ? '2px 2px 4px rgba(0, 0, 0, 0.2)'
+      ? '2px 2px 4px rgba(0, 0, 0, 0.1)'
       : '2px 2px 4px rgba(0, 0, 0, 0.5)'};
 `;
 
@@ -40,14 +40,16 @@ const Section = styled.section`
   padding: 2rem;
   background: ${({ theme }) => 
     theme === 'day' 
-      ? 'rgba(255, 255, 255, 0.95)' 
+      ? 'rgba(255, 255, 255, 0.98)' 
       : 'rgba(0, 0, 0, 0.6)'};
   border-radius: 15px;
   transition: all 0.3s ease;
+  border: 1px solid ${({ theme }) => 
+    theme === 'day' ? 'rgba(0, 0, 0, 0.1)' : 'rgba(255, 255, 255, 0.1)'};
 
   &:hover {
     transform: translateY(-5px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
 `;
 
@@ -55,7 +57,8 @@ const SectionTitle = styled.h2`
   font-size: 2rem;
   margin-bottom: 1.5rem;
   color: ${({ theme }) => 
-    theme === 'day' ? '#1a237e' : '#fff'};
+    theme === 'day' ? '#000' : '#fff'};
+  font-weight: 600;
 `;
 
 const Text = styled.p`
@@ -63,7 +66,7 @@ const Text = styled.p`
   line-height: 1.6;
   margin-bottom: 1rem;
   color: ${({ theme }) => 
-    theme === 'day' ? '#1a237e' : 'rgba(255, 255, 255, 0.9)'};
+    theme === 'day' ? '#333' : 'rgba(255, 255, 255, 0.9)'};
 `;
 
 const StatsGrid = styled.div`
@@ -78,21 +81,23 @@ const StatBox = styled.div`
   text-align: center;
   background: ${({ theme }) => 
     theme === 'day'
-      ? 'rgba(255, 255, 255, 0.9)'
+      ? 'rgba(255, 255, 255, 0.98)'
       : 'rgba(0, 0, 0, 0.4)'};
   border-radius: 15px;
   transition: all 0.3s ease;
+  border: 1px solid ${({ theme }) => 
+    theme === 'day' ? 'rgba(0, 0, 0, 0.1)' : 'rgba(255, 255, 255, 0.1)'};
 
   &:hover {
     transform: translateY(-5px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
 
   svg {
     font-size: 2.5rem;
     margin-bottom: 1rem;
     color: ${({ theme }) => 
-      theme === 'day' ? '#1a237e' : props => props.iconColor || '#FFD700'};
+      theme === 'day' ? '#000' : props => props.iconColor || '#FFD700'};
   }
 `;
 
@@ -102,7 +107,7 @@ const StatNumber = styled.div`
   margin-bottom: 0.5rem;
   background: ${({ theme }) => 
     theme === 'day'
-      ? 'linear-gradient(to right, #1a237e, #0d47a1)'
+      ? 'linear-gradient(to right, #000, #333)'
       : 'linear-gradient(to right, #FFD700, #FFA500)'};
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -111,7 +116,7 @@ const StatNumber = styled.div`
 const StatLabel = styled.div`
   font-size: 1.1rem;
   color: ${({ theme }) => 
-    theme === 'day' ? '#1a237e' : 'rgba(255, 255, 255, 0.9)'};
+    theme === 'day' ? '#333' : 'rgba(255, 255, 255, 0.9)'};
 `;
 
 const TeamGrid = styled.div`
@@ -126,14 +131,16 @@ const TeamMember = styled.div`
   text-align: center;
   background: ${({ theme }) => 
     theme === 'day'
-      ? 'rgba(255, 255, 255, 0.9)'
+      ? 'rgba(255, 255, 255, 0.98)'
       : 'rgba(0, 0, 0, 0.4)'};
   border-radius: 15px;
   transition: all 0.3s ease;
+  border: 1px solid ${({ theme }) => 
+    theme === 'day' ? 'rgba(0, 0, 0, 0.1)' : 'rgba(255, 255, 255, 0.1)'};
 
   &:hover {
     transform: translateY(-5px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
 `;
 
@@ -144,7 +151,7 @@ const MemberImage = styled.div`
   border-radius: 50%;
   background: ${({ theme }) => 
     theme === 'day'
-      ? 'linear-gradient(45deg, #1a237e, #0d47a1)'
+      ? 'linear-gradient(45deg, #000, #333)'
       : 'linear-gradient(45deg, #FFD700, #FFA500)'};
   display: flex;
   align-items: center;
@@ -161,13 +168,14 @@ const MemberName = styled.h3`
   font-size: 1.5rem;
   margin-bottom: 0.5rem;
   color: ${({ theme }) => 
-    theme === 'day' ? '#1a237e' : '#fff'};
+    theme === 'day' ? '#000' : '#fff'};
+  font-weight: 600;
 `;
 
 const MemberRole = styled.div`
   font-size: 1.1rem;
   color: ${({ theme }) => 
-    theme === 'day' ? '#1a237e' : 'rgba(255, 255, 255, 0.9)'};
+    theme === 'day' ? '#333' : 'rgba(255, 255, 255, 0.9)'};
   margin-bottom: 1rem;
 `;
 

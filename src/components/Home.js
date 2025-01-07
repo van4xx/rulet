@@ -25,28 +25,25 @@ const Content = styled.div`
   width: 100%;
   padding: 0 20px;
   margin-bottom: 0;
-  color: ${props => props.theme === 'day' ? '#1a237e' : 'white'};
+  color: ${props => props.theme === 'day' ? '#000' : 'white'};
 `;
 
 const Title = styled.h1`
   font-size: 4rem;
   margin-bottom: 1rem;
-  background: ${props => props.theme === 'day' 
-    ? 'linear-gradient(to right, #1a237e, #0d47a1)'
-    : 'linear-gradient(to right, #FFD700, #FFA500)'};
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: ${props => props.theme === 'day' ? '#000' : '#FFD700'};
   text-shadow: ${props => props.theme === 'day'
-    ? '0 0 20px rgba(26, 35, 126, 0.3)'
+    ? '2px 2px 4px rgba(0, 0, 0, 0.2)'
     : '0 0 20px rgba(255, 215, 0, 0.3)'};
 `;
 
 const Subtitle = styled.p`
   font-size: 1.5rem;
   margin-bottom: 2rem;
-  color: ${props => props.theme === 'day' ? '#1a237e' : 'rgba(255, 255, 255, 0.9)'};
+  color: ${props => props.theme === 'day' ? '#000' : 'rgba(255, 255, 255, 0.9)'};
   max-width: 800px;
   margin: 0 auto 2rem;
+  font-weight: ${props => props.theme === 'day' ? '500' : '400'};
 `;
 
 const StartButton = styled(Link)`
@@ -78,27 +75,30 @@ const StatsGrid = styled.div`
 
 const StatBox = styled.div`
   background: ${props => props.theme === 'day'
-    ? 'rgba(255, 255, 255, 0.9)'
+    ? 'rgba(255, 255, 255, 0.98)'
     : 'rgba(255, 255, 255, 0.1)'};
   backdrop-filter: blur(10px);
   padding: 2rem;
   border-radius: 20px;
   border: 1px solid ${props => props.theme === 'day'
-    ? 'rgba(26, 35, 126, 0.2)'
+    ? 'rgba(0, 0, 0, 0.1)'
     : 'rgba(255, 255, 255, 0.1)'};
   transition: all 0.3s ease;
 
   &:hover {
     transform: translateY(-5px);
     background: ${props => props.theme === 'day'
-      ? 'rgba(255, 255, 255, 0.95)'
+      ? 'rgba(255, 255, 255, 1)'
       : 'rgba(255, 255, 255, 0.15)'};
+    box-shadow: ${props => props.theme === 'day'
+      ? '0 5px 15px rgba(0, 0, 0, 0.1)'
+      : '0 5px 15px rgba(0, 0, 0, 0.3)'};
   }
 
   svg {
     font-size: 2.5rem;
     margin-bottom: 1rem;
-    color: ${props => props.theme === 'day' ? '#1a237e' : props.iconColor || '#FFD700'};
+    color: ${props => props.theme === 'day' ? '#000' : props.iconColor || '#FFD700'};
   }
 `;
 
@@ -106,16 +106,13 @@ const StatNumber = styled.div`
   font-size: 2rem;
   font-weight: bold;
   margin: 0.5rem 0;
-  background: ${props => props.theme === 'day'
-    ? 'linear-gradient(to right, #1a237e, #0d47a1)'
-    : 'linear-gradient(to right, #FFD700, #FFA500)'};
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: ${props => props.theme === 'day' ? '#000' : '#FFD700'};
 `;
 
 const StatLabel = styled.div`
   font-size: 1.1rem;
-  color: ${props => props.theme === 'day' ? '#1a237e' : 'rgba(255, 255, 255, 0.8)'};
+  color: ${props => props.theme === 'day' ? '#000' : 'rgba(255, 255, 255, 0.8)'};
+  font-weight: ${props => props.theme === 'day' ? '500' : '400'};
 `;
 
 const FeatureGrid = styled.div`
@@ -127,25 +124,35 @@ const FeatureGrid = styled.div`
 
 const FeatureBox = styled.div`
   background: ${props => props.theme === 'day'
-    ? 'rgba(255, 255, 255, 0.9)'
+    ? 'rgba(255, 255, 255, 0.98)'
     : 'rgba(0, 0, 0, 0.3)'};
   backdrop-filter: blur(10px);
   padding: 2rem;
   border-radius: 20px;
   border: 1px solid ${props => props.theme === 'day'
-    ? 'rgba(26, 35, 126, 0.2)'
+    ? 'rgba(0, 0, 0, 0.1)'
     : 'rgba(255, 255, 255, 0.1)'};
   text-align: left;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: ${props => props.theme === 'day'
+      ? '0 5px 15px rgba(0, 0, 0, 0.1)'
+      : '0 5px 15px rgba(0, 0, 0, 0.3)'};
+  }
 
   h3 {
     font-size: 1.5rem;
     margin-bottom: 1rem;
-    color: ${props => props.theme === 'day' ? '#1a237e' : '#FFD700'};
+    color: ${props => props.theme === 'day' ? '#000' : '#FFD700'};
+    font-weight: 600;
   }
 
   p {
-    color: ${props => props.theme === 'day' ? '#1a237e' : 'rgba(255, 255, 255, 0.8)'};
+    color: ${props => props.theme === 'day' ? '#000' : 'rgba(255, 255, 255, 0.8)'};
     line-height: 1.6;
+    font-weight: ${props => props.theme === 'day' ? '500' : '400'};
   }
 `;
 
@@ -158,13 +165,10 @@ const InfoSection = styled.div`
 const InfoTitle = styled.h2`
   font-size: 2.5rem;
   margin-bottom: 2rem;
-  background: ${props => props.theme === 'day'
-    ? 'linear-gradient(to right, #1a237e, #0d47a1)'
-    : 'linear-gradient(to right, #64ffda, #00b0ff)'};
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: ${props => props.theme === 'day' ? '#000' : '#fff'};
+  font-weight: 600;
   text-shadow: ${props => props.theme === 'day'
-    ? '0 0 15px rgba(26, 35, 126, 0.3)'
+    ? '2px 2px 4px rgba(0, 0, 0, 0.1)'
     : '0 0 15px rgba(100, 255, 218, 0.3)'};
 `;
 
@@ -177,48 +181,54 @@ const InfoGrid = styled.div`
 
 const InfoCard = styled.div`
   background: ${props => props.theme === 'day'
-    ? 'rgba(255, 255, 255, 0.9)'
+    ? 'rgba(255, 255, 255, 0.98)'
     : 'rgba(0, 0, 0, 0.4)'};
   backdrop-filter: blur(10px);
   padding: 2rem;
   border-radius: 20px;
   border: 1px solid ${props => props.theme === 'day'
-    ? 'rgba(26, 35, 126, 0.2)'
+    ? 'rgba(0, 0, 0, 0.1)'
     : 'rgba(255, 255, 255, 0.1)'};
   transition: all 0.3s ease;
 
   &:hover {
     transform: translateY(-5px);
-    border-color: ${props => props.theme === 'day'
-      ? 'rgba(26, 35, 126, 0.3)'
-      : 'rgba(100, 255, 218, 0.3)'};
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    box-shadow: ${props => props.theme === 'day'
+      ? '0 5px 15px rgba(0, 0, 0, 0.1)'
+      : '0 5px 15px rgba(0, 0, 0, 0.3)'};
   }
 
   svg {
     font-size: 2.5rem;
-    color: ${props => props.theme === 'day' ? '#1a237e' : '#64ffda'};
+    color: ${props => props.theme === 'day' ? '#000' : '#64ffda'};
     margin-bottom: 1rem;
   }
 `;
 
 const InfoCardTitle = styled.h3`
   font-size: 1.5rem;
-  color: ${props => props.theme === 'day' ? '#1a237e' : '#fff'};
+  color: ${props => props.theme === 'day' ? '#000' : '#fff'};
   margin-bottom: 1rem;
+  font-weight: 600;
 `;
 
 const InfoCardText = styled.p`
-  color: ${props => props.theme === 'day' ? '#1a237e' : 'rgba(255, 255, 255, 0.8)'};
+  color: ${props => props.theme === 'day' ? '#000' : 'rgba(255, 255, 255, 0.8)'};
   line-height: 1.6;
   font-size: 1.1rem;
+  font-weight: ${props => props.theme === 'day' ? '500' : '400'};
 `;
 
 const RewardsSection = styled(InfoSection)`
-  background: rgba(0, 0, 0, 0.3);
+  background: ${props => props.theme === 'day'
+    ? 'rgba(255, 255, 255, 0.98)'
+    : 'rgba(0, 0, 0, 0.3)'};
   border-radius: 20px;
   padding: 2rem;
   margin: 4rem auto;
+  border: 1px solid ${props => props.theme === 'day'
+    ? 'rgba(0, 0, 0, 0.1)'
+    : 'rgba(255, 255, 255, 0.1)'};
 `;
 
 const RewardsList = styled.div`
@@ -231,29 +241,41 @@ const RewardsList = styled.div`
 const RewardItem = styled.div`
   text-align: center;
   padding: 1.5rem;
-  background: rgba(255, 255, 255, 0.05);
+  background: ${props => props.theme === 'day'
+    ? 'rgba(255, 255, 255, 0.98)'
+    : 'rgba(255, 255, 255, 0.05)'};
   border-radius: 15px;
   transition: all 0.3s ease;
+  border: 1px solid ${props => props.theme === 'day'
+    ? 'rgba(0, 0, 0, 0.1)'
+    : 'rgba(255, 255, 255, 0.1)'};
 
   &:hover {
     transform: translateY(-5px);
-    background: rgba(255, 255, 255, 0.1);
+    background: ${props => props.theme === 'day'
+      ? '#fff'
+      : 'rgba(255, 255, 255, 0.1)'};
+    box-shadow: ${props => props.theme === 'day'
+      ? '0 5px 15px rgba(0, 0, 0, 0.1)'
+      : '0 5px 15px rgba(0, 0, 0, 0.3)'};
   }
 
   svg {
     font-size: 2rem;
-    color: #FFD700;
+    color: ${props => props.theme === 'day' ? '#000' : '#FFD700'};
     margin-bottom: 1rem;
   }
 
   h4 {
-    color: #fff;
+    color: ${props => props.theme === 'day' ? '#000' : '#fff'};
     margin-bottom: 0.5rem;
+    font-weight: 600;
   }
 
   p {
-    color: rgba(255, 255, 255, 0.7);
+    color: ${props => props.theme === 'day' ? '#000' : 'rgba(255, 255, 255, 0.7)'};
     font-size: 0.9rem;
+    font-weight: ${props => props.theme === 'day' ? '500' : '400'};
   }
 `;
 
