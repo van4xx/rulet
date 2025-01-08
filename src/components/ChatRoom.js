@@ -18,7 +18,7 @@ import styled from 'styled-components';
 
 // Socket configuration
 const SOCKET_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://ruletka.top' 
+  ? 'https://ruletka.top:5002' 
   : 'http://localhost:5002';
 
 const socket = io(SOCKET_URL, {
